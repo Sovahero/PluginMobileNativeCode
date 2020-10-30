@@ -26,7 +26,7 @@
 
 ![LevelBlueprint](screenshot/LevelBlueprint.png)
 
-Запустите на вашем мобильном устройстве (IOS пока не поддерживается).
+* Запустите на вашем мобильном устройстве (IOS пока не поддерживается).
 
 ## Тестирование в *Unreal Engine 4.24* на **Nexus 5** - *OpenGL ES2* - *armeabi-v7a* - **ndk-r14b**
 
@@ -52,13 +52,15 @@
 * Перейдите в *\PLUGIN_NAME\Source\PLUGIN_NAME\Private* и откройте *PLUGIN_NAMEBPLibrary.cpp*.
   В данном файле продемонстрированы 3 функции для вызова Java кода.
 
-* Java кода вызывается с помощью **AndroidUtils::CallNativeAndroid< ReturnType >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**, если функция что-то возвращает.
+* Java код вызывается с помощью **AndroidUtils::CallNativeAndroid< ReturnType >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**, если функция что-то возвращает.
 
 * *ReturnType* указывается в зависимости от возвращаемого типа. *1 аргумент* это package+название вашего класса, *2 аргумент* название вашей функции, *3 аргумент* указывает - нужно ли передать Activity данного сеанса. Далее кол-во аргументов может быть передано сколько угодно, в зависимости от того, что принимает ваша функция.
 
 * В случае если Java функция ничего не возвращает (Void) то вызывается **AndroidUtils::CallNativeAndroidVoid("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**
 
-* Асинхронный вызов Java происходит посредством диспетчеров: код Java вызывает функцию C++, который в свою очередь активирует его.
+* Асинхронный вызов Java происходит посредствам диспетчеров: код Java вызывает функцию C++, которая в свою очередь активирует его.
+
+* При добавлении нового Java класса или изменении текущего - удаляйте папку *Intermediate* в папке вашего проекта.
 
 ## Для iOS
-* Нативный код Objective-C для IOS скоро появится
+* Нативный код Objective-C для IOS скоро появится...
