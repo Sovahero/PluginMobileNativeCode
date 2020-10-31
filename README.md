@@ -16,7 +16,7 @@
 
 
 ## Особенности / Features
-![CallJava](screenshot/CallJava.png)
+![CallJava1](screenshot/CallJava1.png)
 
 **(*Rus*)**
 * Собирается на ndk-14 и ndk-21 для Android
