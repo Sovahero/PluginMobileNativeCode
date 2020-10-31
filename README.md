@@ -1,5 +1,5 @@
 
-![Logo](screenshot/Logo.png)
+![Logo1](screenshot/Logo1.png)
 
 # Mobile Native Code Plugin for Unreal Engine 4
 
