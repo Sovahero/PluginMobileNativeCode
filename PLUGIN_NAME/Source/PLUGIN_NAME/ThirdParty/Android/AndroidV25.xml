@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Дополнительные шаги для сборки Android в версии UE 4.25 и выше -->
+<!-- Дополнительные шаги для сборки Android в версии UE 4.25 и выше / 
+        Additional steps for building Android in UE version 4.25 and higher-->
+
 <root xmlns:android="http://schemas.android.com/apk/res/android">
-  <!-- Инициализация переменных -->
+  <!-- Инициализация XML переменных / Initializing XML variables -->
   <init>    
     <setBool result="bSupported" value="false"/>
 
@@ -21,19 +23,21 @@
     
   </init>
 
-  <!-- Данные файлы копируются во время сборки в компановшик, dst должен совпадать с package в (*.java) -->
+  <!-- Данные файлы копируются во время сборки в компановшик, dst должен совпадать с package в (*.java) / 
+          These files are copied during build to the linker, and the dst must match package in (*. java) -->
   <prebuildCopies>
     <copyDir src="$S(PluginDir)/../../Private/Android/Java" dst="$S(BuildDir)/src/com/epicgames/ue4" />
   </prebuildCopies>
 
-  <!-- Объявить собственные классы -->
+  <!-- Объявить собственные классы / Declare your own classes -->
   <proguardAdditions>
     <insert>
       -keep public class com.epicgames.ue4.** { public protected *; }
     </insert>
   </proguardAdditions>
 
-  <!-- Данные бибилотеки копируются во время сборки в компановшик -->
+  <!-- Данные бибилотеки копируются во время сборки в компановшик / 
+        Library data is copied to the linker during build -->
   <resourceCopies>
 
     <isArch arch="armeabi-v7a">
@@ -52,12 +56,13 @@
 
   </resourceCopies>
 
-  <!-- Подключить бибилотеки в самом приложении (Иногда это не нужно) -->
+  <!-- Подключить библиотеки в самом приложении (Иногда это не нужно) / 
+        Enable libraries in the app itself (Sometimes you don't need to) -->
   <soLoadLibrary>
     <!--<loadLibrary name="example" failmsg="XML! library not loaded and required!" />-->
   </soLoadLibrary>
 
-  <!-- Объявить класы для Android -->
+  <!-- Объявить класcы для Android / Declare classes for Android -->
   <proguardAdditions>
     <insert>
       -keep public class android.support.v4.app.** { public protected *; }
@@ -66,8 +71,8 @@
       -keep public interface android.support.v7.** { public protected *; }
     </insert>
   </proguardAdditions>
-  
-  <!-- Добавить строки в систему сборки gradle -->
+
+  <!-- Добавить строки в систему сборки gradle / Add strings to the gradle build system -->
   <buildGradleAdditions>
     <insert>
       dependencies {
