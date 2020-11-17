@@ -2,7 +2,7 @@
 
 //==============Java Convert===================================
 
-// <FString>Arr to jobjectArray
+// TArray<FString> to jobjectArray
 jobjectArray JavaConvert::ConvertToJStringArray(const TArray<FString>& stringArray)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -13,7 +13,7 @@ jobjectArray JavaConvert::ConvertToJStringArray(const TArray<FString>& stringArr
 	return javaStringArray;
 }
 
-// <bool>Arr to jbooleanArray
+// TArray<bool> to jbooleanArray
 jbooleanArray JavaConvert::ConvertToJBooleanArray(const TArray<bool>& boolArray)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -25,7 +25,7 @@ jbooleanArray JavaConvert::ConvertToJBooleanArray(const TArray<bool>& boolArray)
 	return javaBooleanArray;
 }
 
-// <int>Arr to jintArray
+// TArray<int> to jintArray
 jintArray JavaConvert::ConvertToJIntArray(const TArray<int>& intArray)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -39,7 +39,7 @@ jintArray JavaConvert::ConvertToJIntArray(const TArray<int>& intArray)
 	return javaIntArray;
 }
 
-// <unsigned char>Arr to jbyteArray
+// TArray<unsigned char> to jbyteArray
 jbyteArray JavaConvert::ConvertToJByteArray(const TArray<uint8>& byteArray)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -53,7 +53,7 @@ jbyteArray JavaConvert::ConvertToJByteArray(const TArray<uint8>& byteArray)
 	return javaByteArray;
 }
 
-// <long>Arr to jlongArray
+// TArray<long> to jlongArray
 jlongArray JavaConvert::ConvertToJLongArray(const TArray<long>& longArray)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -67,7 +67,21 @@ jlongArray JavaConvert::ConvertToJLongArray(const TArray<long>& longArray)
 	return javaLongArray;
 }
 
-// jbyteArray to <unsigned char>Arr
+// TArray<float> to jfloatArray
+jfloatArray JavaConvert::ConvertToJFloatArray(const TArray<float>& floatArray)
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jfloatArray javaFloatArray = (jfloatArray)Env->NewFloatArray(floatArray.Num());
+	jfloat* javaFloatArrayPtr = (jfloat*)malloc(floatArray.Num() * sizeof(jfloat));
+	for (int i = 0; i < floatArray.Num(); i++) {
+		javaFloatArrayPtr[i] = floatArray[i];
+	}
+	Env->SetFloatArrayRegion(javaFloatArray, 0, floatArray.Num(), javaFloatArrayPtr);
+	free(javaFloatArrayPtr);
+	return javaFloatArray;
+}
+
+// jbyteArray to TArray<unsigned char>
 TArray<uint8> JavaConvert::ConvertToByteArray(jbyteArray javaArray)
 {
 	TArray<uint8> byteArray;
@@ -80,7 +94,35 @@ TArray<uint8> JavaConvert::ConvertToByteArray(jbyteArray javaArray)
 	return byteArray;
 }
 
-// jlongArray to <long>Arr
+// jfloatArray to TArray<float>
+TArray<float> JavaConvert::ConvertToFloatArray(jfloatArray javaArray)
+{
+	TArray<float> floatArray;
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jfloat* javaFloat = Env->GetFloatArrayElements(javaArray, 0);
+	int length = Env->GetArrayLength(javaArray);
+	for (int i = 0; i < length; i++)
+	{
+		floatArray.Add((float)javaFloat[i]);
+	}
+	return floatArray;
+}
+
+// jintArray to TArray<int>
+TArray<int> JavaConvert::ConvertToIntArray(jintArray javaArray)
+{
+	TArray<int> numArray;
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jint* javaNum = Env->GetIntArrayElements(javaArray, 0);
+	int length = Env->GetArrayLength(javaArray);
+	for (int i = 0; i < length; i++)
+	{
+		numArray.Add((int)javaNum[i]);
+	}
+	return numArray;
+}
+
+// jlongArray to TArray<long>
 TArray<long> JavaConvert::ConvertToLongArray(jlongArray javaArray)
 {
 	TArray<long> longArray;
@@ -94,7 +136,7 @@ TArray<long> JavaConvert::ConvertToLongArray(jlongArray javaArray)
 	return longArray;
 }
 
-// jobjectArray to <FString>Arr
+// jobjectArray to TArray<FString>
 TArray<FString> JavaConvert::ConvertToStringArray(jobjectArray javaStringArray)
 {
 	TArray<FString> stringArray;

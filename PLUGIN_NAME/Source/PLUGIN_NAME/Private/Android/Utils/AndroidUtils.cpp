@@ -1,109 +1,65 @@
 #include "AndroidUtils.h"
 
-//=============== Call Target Jni ========================================
-FString AndroidUtils::CallJniStringMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	jstring Return = static_cast<jstring>(Env->CallStaticObjectMethodV(Class, Method, Args));
-	va_end(Args);
-
-	const char * UTFString = Env->GetStringUTFChars(Return, nullptr);
-	FString Result(UTF8_TO_TCHAR(UTFString));
-	Env->ReleaseStringUTFChars(Return, UTFString);
-	Env->DeleteLocalRef(Class);
-
-	return Result;
+//=============== Override Convert===========================
+template<typename anyType>
+const anyType& AndroidUtils::convertArg(const anyType& value) {
+	return value;
 }
-bool AndroidUtils::CallJniBoolMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+jstring AndroidUtils::convertArg(const char* str)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	bool Result = Env->CallStaticBooleanMethodV(Class, Method, Args);
-	va_end(Args);
-
-	Env->DeleteLocalRef(Class);
-
-	return Result;
+	return JavaConvert::GetJavaString(str);
 }
-int AndroidUtils::CallJniIntMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+jstring AndroidUtils::convertArg(string str)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	int Result = Env->CallStaticIntMethodV(Class, Method, Args);
-	va_end(Args);
-
-	Env->DeleteLocalRef(Class);
-
-	return Result;
+	return JavaConvert::GetJavaString(str);
 }
-long AndroidUtils::CallJniLongMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+jstring AndroidUtils::convertArg(FString str)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	long Result = Env->CallStaticLongMethodV(Class, Method, Args);
-	va_end(Args);
-
-	Env->DeleteLocalRef(Class);
-
-	return Result;
+	return JavaConvert::GetJavaString(str);
 }
-jobject AndroidUtils::CallJniObjectMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+//---array
+jobjectArray AndroidUtils::convertArg(TArray<const char*> stringArray)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	jobject Result = Env->CallStaticObjectMethodV(Class, Method, Args);
-	va_end(Args);
-
-	Env->DeleteLocalRef(Class);
-
-	return Result;
+	TArray<FString> tmpFString;
+	for (auto tmpCellStringArray : stringArray) {
+		string tmpString = tmpCellStringArray;
+		tmpFString.Add(tmpString.c_str());
+	}
+	return JavaConvert::ConvertToJStringArray(tmpFString);
 }
-void AndroidUtils::CallJniVoidMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+jobjectArray AndroidUtils::convertArg(TArray<string> stringArray)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Method CallJni [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+	TArray<FString> tmpFString;
+	for (auto tmpCellStringArray : stringArray)
+		tmpFString.Add(tmpCellStringArray.c_str());
 
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
-	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
-	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
-
-	va_list Args;
-	va_start(Args, MethodSignature);
-	Env->CallStaticVoidMethodV(Class, Method, Args);
-	va_end(Args);
-
-	Env->DeleteLocalRef(Class);
+	return JavaConvert::ConvertToJStringArray(tmpFString);
 }
+jobjectArray AndroidUtils::convertArg(TArray<FString> stringArray)
+{
+	return JavaConvert::ConvertToJStringArray(stringArray);
+}
+jbooleanArray AndroidUtils::convertArg(TArray<bool> boolArray)
+{
+	return JavaConvert::ConvertToJBooleanArray(boolArray);
+}
+jintArray AndroidUtils::convertArg(TArray<int> intArray)
+{
+	return JavaConvert::ConvertToJIntArray(intArray);
+}
+jbyteArray AndroidUtils::convertArg(TArray<uint8> byteArray)
+{
+	return JavaConvert::ConvertToJByteArray(byteArray);
+}
+jlongArray AndroidUtils::convertArg(TArray<long> longArray)
+{
+	return JavaConvert::ConvertToJLongArray(longArray);
+}
+jfloatArray AndroidUtils::convertArg(TArray<float> floatArray)
+{
+	return JavaConvert::ConvertToJFloatArray(floatArray);
+}
+
 
 //=============== Override Tempalte===========================
 string AndroidUtils::GetTypeName(void)
@@ -162,23 +118,20 @@ string AndroidUtils::GetTypeName(jobject jo)
 {
 	return "Ljava/lang/Object;";
 }
-
-//=============== Override Convert===========================
+//----array
+string AndroidUtils::GetTypeName(jobjectArray joa)
+{
+	return "[Ljava/lang/Object;";
+}
 template<typename anyType>
-const anyType& AndroidUtils::convertArg(const anyType& value) {	
-	return value;
+string AndroidUtils::GetTypeName(TArray<anyType> anyArr) {
+	anyType SymbolType{};
+	return string("[" + GetTypeName(SymbolType));
 }
-jstring AndroidUtils::convertArg(const char* str)
-{	
-	return JavaConvert::GetJavaString(str);
-}
-jstring AndroidUtils::convertArg(string str)
-{	
-	return JavaConvert::GetJavaString(str);
-}
-jstring AndroidUtils::convertArg(FString str)
-{	
-	return JavaConvert::GetJavaString(str);
+template<typename anyType>
+string AndroidUtils::GetTypeName(std::vector<anyType> anyArr) {
+	anyType SymbolType{};
+	return string("[" + GetTypeName(SymbolType));
 }
 
 //=============== Recursion Method for Variadic Template===========================
@@ -192,7 +145,172 @@ void AndroidUtils::GetType(string& signatureString, anyType value, Args ...args)
 // ------------ GetType
 void AndroidUtils::GetType(string&) {   }
 
+
+//=============== Call Target Jni ========================================
+void AndroidUtils::CallJniVoidMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniVoidMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	Env->CallStaticVoidMethodV(Class, Method, Args);
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+}
+
+FString AndroidUtils::CallJniStringMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniStringMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	jstring Return = static_cast<jstring>(Env->CallStaticObjectMethodV(Class, Method, Args));
+	va_end(Args);
+
+	const char* UTFString = Env->GetStringUTFChars(Return, nullptr);
+	FString Result(UTF8_TO_TCHAR(UTFString));
+	Env->ReleaseStringUTFChars(Return, UTFString);
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+bool AndroidUtils::CallJniBoolMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniBoolMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	bool Result = Env->CallStaticBooleanMethodV(Class, Method, Args);
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+int AndroidUtils::CallJniIntMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniIntMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	int Result = Env->CallStaticIntMethodV(Class, Method, Args);
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+long AndroidUtils::CallJniLongMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniLongMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	long Result = Env->CallStaticLongMethodV(Class, Method, Args);
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+jobject AndroidUtils::CallJniObjectMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniObjectMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	jobject Result = Env->CallStaticObjectMethodV(Class, Method, Args);
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+jobjectArray AndroidUtils::CallJniObjectArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniObjectArray [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	jobjectArray Result = static_cast<jobjectArray>(Env->CallStaticObjectMethodV(Class, Method, Args));
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+jfloatArray AndroidUtils::CallJniFloatArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniFloatArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	jfloatArray Result = static_cast<jfloatArray>(Env->CallStaticObjectMethodV(Class, Method, Args));
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+jintArray AndroidUtils::CallJniIntArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Method CallJniIntArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv();
+	jclass Class = FAndroidApplication::FindJavaClass(ClassName);
+	jmethodID Method = FJavaWrapper::FindStaticMethod(Env, Class, MethodName, MethodSignature, false);
+
+	va_list Args;
+	va_start(Args, MethodSignature);
+	jintArray Result = static_cast<jintArray>(Env->CallStaticObjectMethodV(Class, Method, Args));
+	va_end(Args);
+
+	Env->DeleteLocalRef(Class);
+
+	return Result;
+}
+
 //=============== Override Callback and Return JNI===========================
+// ------------ void
+template<typename ...Args>
+void AndroidUtils::CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
+{
+	CallJniVoidMethod(ClassName, MethodName, MethodSignature, args...);
+}
+
 // ------------ FString
 template<typename ...Args>
 FString AndroidUtils::CallJNI(FString str, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
@@ -230,17 +348,24 @@ jobject AndroidUtils::CallJNI(jobject jo, const char* ClassName, const char* Met
 {
 	return CallJniObjectMethod(ClassName, MethodName, MethodSignature, args...);
 }
-// ------------ void
+// ------------ TArray<FString>
 template<typename ...Args>
-void AndroidUtils::CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
+TArray<FString> AndroidUtils::CallJNI(TArray<FString> strArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
 {
-	CallJniVoidMethod(ClassName, MethodName, MethodSignature, args...);
+	return JavaConvert::ConvertToStringArray(CallJniObjectArrayMethod(ClassName, MethodName, MethodSignature, args...));
 }
-
-
-
-
-
+// ------------ TArray<float>
+template<typename ...Args>
+TArray<float> AndroidUtils::CallJNI(TArray<float> fArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
+{
+	return JavaConvert::ConvertToFloatArray(CallJniFloatArrayMethod(ClassName, MethodName, MethodSignature, args...));
+}
+// ------------ TArray<int>
+template<typename ...Args>
+TArray<int> AndroidUtils::CallJNI(TArray<int> iArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
+{
+	return JavaConvert::ConvertToIntArray(CallJniIntArrayMethod(ClassName, MethodName, MethodSignature, args...));
+}
 
 
 //============Вызов нативного кода Android из C++ / Calling native Android code from C++===============
@@ -250,16 +375,16 @@ void AndroidUtils::CallVoidJni(const char* ClassName, const char* MethodName, co
 * @param ClassName - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
 * @param FunctionName - Имя вашей Java функции / Name of your Java function.
 * @param isActivity - Определяет нужно ли передавать Activity UE4 в Java / Determines whether to pass Activity UE4 to Java.
-* @param args... - 
-* Список ваших параметров в Java функции(если тип переменной в Java коде специфичный например jobject, 
+* @param args... -
+* Список ваших параметров в Java функции(если тип переменной в Java коде специфичный например jobject,
 * его следует перед вызовом функции переконвертировать) /
-* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function). 
+* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
 */
 template<typename MethodType, typename ...Args>
 MethodType AndroidUtils::CallNativeAndroid(const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
 {
 	MethodType returnType;
-	
+
 	string MethodSignature = "(";
 	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
 	GetType(MethodSignature, args...);
@@ -287,7 +412,7 @@ MethodType AndroidUtils::CallNativeAndroid(const char* ClassName, const char* Fu
 */
 template<typename ...Args>
 void AndroidUtils::CallNativeAndroidVoid(const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
-{	
+{
 	string MethodSignature = "(";
 	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
 	GetType(MethodSignature, args...);

@@ -37,28 +37,34 @@ std::string to_string(T value)
 #endif //-------------------------------------------------------------
 #endif //Android
 
+// #~~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //Диспатчер/Dispatcher
 //-------------------------------------------------------------------------------------------------------------
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTypeDispacth, FString, ReturnValue);
 //------------------------------------------------------------------------------------------------------------
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 UENUM(BlueprintType)
-enum ToastLength
+enum ToastLengthMessage
 {
-	Short = 0 UMETA(DisplayName = "Short"),
-	Long = 1 UMETA(DisplayName = "Long"),
+	sec2 = 0 UMETA(DisplayName = "Short 2 sec"),
+	sec3 = 1 UMETA(DisplayName = "Long 3.5 sec"),
 };
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 UCLASS()
 class UPLUGIN_NAMEBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 public:
-
+	// #~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//---Диспатчер/Dispatcher ---
 	static void FStaticFunctDispatch(FString ReturnValue);
 	static FTypeDispacth FStaticValueDispatch;
-	//----------------------------------
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	//==== Переменные класса/Class variable==========================================
 
@@ -71,5 +77,8 @@ public:
 		static FString HelloWorld(FString String = "Hello World");
 
 	UFUNCTION(BlueprintCallable, Category = "PLUGIN_NAME Category")
-		static void ShowToastMobile(FString String, ToastLength length);
+		static void ShowToastMobile(FString String, ToastLengthMessage length);
+	
+	UFUNCTION(BlueprintCallable, Category = "PLUGIN_NAME Category")
+		static void ExampleArray();
 };

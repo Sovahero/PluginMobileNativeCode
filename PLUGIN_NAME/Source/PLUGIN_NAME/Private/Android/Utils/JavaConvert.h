@@ -14,28 +14,37 @@ class JavaConvert
 public:
 	//============== Функции для конвертирования в Java типы / Functions for converting to Java types ===================================
 
-	// <FString>Arr to jobjectArray
+	// TArray<FString> to jobjectArray
 	static jobjectArray ConvertToJStringArray(const TArray<FString>& stringArray);
 
-	// <bool>Arr to jbooleanArray
+	// TArray<bool> to jbooleanArray
 	static jbooleanArray ConvertToJBooleanArray(const TArray<bool>& boolArray);
 
-	// <int>Arr to jintArray
+	// TArray<int> to jintArray
 	static jintArray ConvertToJIntArray(const TArray<int>& intArray);
 
-	// <unsigned char>Arr to jbyteArray
+	// TArray<unsigned char> to jbyteArray
 	static jbyteArray ConvertToJByteArray(const TArray<uint8>& byteArray);
 
-	// <long>Arr to jlongArray
+	// TArray<long> to jlongArray
 	static jlongArray ConvertToJLongArray(const TArray<long>& longArray);
+	
+	// TArray<float> to jfloatArray
+	static jfloatArray ConvertToJFloatArray(const TArray<float>& floatArray);
 
-	// jbyteArray to <unsigned char>Arr
+	// jbyteArray to TArray<unsigned char>
 	static TArray<uint8> ConvertToByteArray(jbyteArray javaArray);
+	
+	// jfloatArray to TArray<float>
+	static TArray<float> ConvertToFloatArray(jfloatArray javaArray);
+	
+	// jfloatArray to TArray<int>
+	static TArray<int> ConvertToIntArray(jintArray javaArray);
 
-	// jlongArray to <long>Arr
+	// jlongArray to TArray<long>
 	static TArray<long> ConvertToLongArray(jlongArray javaArray);
 
-	// jobjectArray to <FString>Arr
+	// jobjectArray to TArray<FString>
 	static TArray<FString> ConvertToStringArray(jobjectArray javaStringArray);
 
 	// FString to jstring

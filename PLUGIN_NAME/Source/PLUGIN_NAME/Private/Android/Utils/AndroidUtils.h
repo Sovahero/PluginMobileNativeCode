@@ -7,19 +7,26 @@
 
 #include <iostream>
 #include <string>
-
+#include <vector>
 using namespace std;
 
 class AndroidUtils
 {
-public:
-	//==============Call Target Jni===================================
-	static FString CallJniStringMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
-	static bool CallJniBoolMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
-	static int CallJniIntMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
-	static long CallJniLongMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
-	static jobject CallJniObjectMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
-	static void CallJniVoidMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+public:	
+	//------------ Convert ---------------------------------------------------	
+	template <typename anyType>
+	static const anyType& convertArg(const anyType& value);
+	static jstring convertArg(const char* str);
+	static jstring convertArg(string str);
+	static jstring convertArg(FString str);
+	static jobjectArray convertArg(TArray<FString> stringArray);
+	static jobjectArray convertArg(TArray<const char*> stringArray);
+	static jobjectArray convertArg(TArray<string> stringArray);
+	static jbooleanArray convertArg(TArray<bool> boolArray);
+	static jintArray convertArg(TArray<int> intArray);
+	static jbyteArray convertArg(TArray<uint8> byteArray);
+	static jlongArray convertArg(TArray<long> longArray);
+	static jfloatArray convertArg(TArray<float> floatArray);
 
 	//================Override Tempalte===========================
 	static string GetTypeName(void);
@@ -36,18 +43,34 @@ public:
 	static string GetTypeName(FString str);
 	static string GetTypeName(jstring str);
 	static string GetTypeName(jobject jo);
-	//------------ Convert ---------------------------------------------------	
-	template <typename anyType>
-	static const anyType& convertArg(const anyType& value);
-	static jstring convertArg(const char* str);
-	static jstring convertArg(string str);
-	static jstring convertArg(FString str);
+	static string GetTypeName(jobjectArray joa);
+	//----array
+	template<typename anyType>
+	static string GetTypeName(TArray<anyType> anyArr);
+	template<typename anyType>
+	static string GetTypeName(std::vector<anyType> anyArr);
 	//-----------------------------------------------------------------------------------------------	
 	static void GetType(string&);
 
 	template <typename T, typename... Args>
 	static void GetType(string& signatureString, T Tvalue, Args... args);
+
+	//==============Call Target Jni===================================
+	static void CallJniVoidMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static FString CallJniStringMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static bool CallJniBoolMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static int CallJniIntMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static long CallJniLongMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static jobject CallJniObjectMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static jobjectArray CallJniObjectArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static jfloatArray CallJniFloatArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+	static jintArray CallJniIntArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
+
 	//-----------------------------------------------------------------------------------------------	
+	// void
+	template <typename... Args>
+	static void CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args... args);
+
 	// FString
 	template <typename... Args>
 	static FString CallJNI(FString str, const char* ClassName, const char* MethodName, const char* MethodSignature, Args... args);
@@ -72,11 +95,17 @@ public:
 	template <typename... Args>
 	static jobject CallJNI(jobject jo, const char* ClassName, const char* MethodName, const char* MethodSignature, Args... args);
 
-	// void
-	template <typename... Args>
-	static void CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args... args);
+	// TArray<FString>
+	template<typename ...Args>
+	static TArray<FString> CallJNI(TArray<FString> strArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args);
 
+	// TArray<float>
+	template<typename ...Args>
+	static TArray<float> CallJNI(TArray<float> strArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args);
 
+	// TArray<int>
+	template<typename ...Args>
+	static TArray<int> CallJNI(TArray<int> iArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args);
 
 
 

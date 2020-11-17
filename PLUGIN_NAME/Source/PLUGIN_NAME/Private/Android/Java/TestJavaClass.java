@@ -10,6 +10,34 @@ import android.provider.Settings;
 
 @Keep
 public class TestJavaClass {
+	// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//----- Вызов Java кода синхроно / Calling Java code synchronously -------------------
+	@Keep
+	public static String HelloWorldOnAndroid(String text) {
+		text += " on Android";
+		return text;
+	}
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//----- Вызов Java кода асинхроно и возвращение значения обратно в C++
+	// Calling Java code asynchronously and returning the value back to C++ --------------
+	@Keep
+	public static native void CallBackCPP(String returnStr);
+
+	@Keep
+	public static void asyncHelloWorldOnAndroid(final Activity activity, final String text) {
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run()
+			{
+				CallBackCPP(text+" on Android");
+			}
+		});
+	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//---- Информация об устройстве / Device information ---------------------
 	@Keep
 	public static String getBrand() {
@@ -37,27 +65,13 @@ public class TestJavaClass {
 			}
 		});
 	}
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	//----- Вызов Java кода синхроно / Calling Java code synchronously -------------------
-	@Keep
-	public static String HelloWorldOnAndroid(String text) {
-		text += " on Android";
-		return text;
+	// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	@Keep 
+	public static String[] TestArray(String[] text, boolean[] b, int[] i, long[] l, float[] f) { 
+		String[] ArrStr = { "string", "Array" }; 
+		return ArrStr;
 	}
-
-	//----- Вызов Java кода асинхроно и возвращение значения обратно в C++
-	// Calling Java code asynchronously and returning the value back to C++ --------------
-	@Keep
-	public static native void CallBackCPP(String returnStr);
-
-	@Keep
-	public static void asyncHelloWorldOnAndroid(final Activity activity, final String text) {
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run()
-			{
-				CallBackCPP(text+" on Android");
-			}
-		});
-	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
