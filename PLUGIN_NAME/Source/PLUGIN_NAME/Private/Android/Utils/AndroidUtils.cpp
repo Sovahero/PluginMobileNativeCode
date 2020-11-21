@@ -2,7 +2,8 @@
 
 //=============== Override Convert===========================
 template<typename anyType>
-const anyType& AndroidUtils::convertArg(const anyType& value) {
+const anyType& AndroidUtils::convertArg(const anyType& value)
+{
 	return value;
 }
 jstring AndroidUtils::convertArg(const char* str)

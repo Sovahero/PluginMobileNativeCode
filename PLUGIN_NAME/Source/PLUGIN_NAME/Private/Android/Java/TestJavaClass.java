@@ -5,8 +5,15 @@ package com.epicgames.ue4;
 import android.app.Activity;
 import android.support.annotation.Keep;
 import android.widget.Toast;
+
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+
 import android.provider.Settings;
+import android.content.Context;
+
+import java.io.File;
 
 @Keep
 public class TestJavaClass {
@@ -18,6 +25,7 @@ public class TestJavaClass {
 		return text;
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 	// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//----- Вызов Java кода асинхроно и возвращение значения обратно в C++
@@ -36,6 +44,7 @@ public class TestJavaClass {
 		});
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 	// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//---- Информация об устройстве / Device information ---------------------
@@ -67,6 +76,7 @@ public class TestJavaClass {
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 	// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	@Keep 
 	public static String[] TestArray(String[] text, boolean[] b, int[] i, long[] l, float[] f) { 
@@ -74,4 +84,19 @@ public class TestJavaClass {
 		return ArrStr;
 	}
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+	// #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 5 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//----- Path to "storage/emulated/0/Android/data/data/%APP_PACKAGE_NAME%/"------------------
+	@Keep
+	public static String GetExternalFilesDir(final Activity activity) {
+		Context context = activity;
+		File file = context.getExternalFilesDir(null);
+		String PathStr = file.getPath();
+		PathStr += "/";
+
+		return PathStr;
+	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 5 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 }

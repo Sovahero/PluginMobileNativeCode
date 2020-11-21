@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <init>
+        <log text="Adding permission to plist..."/>
+    </init>
+    <iosPListUpdates>
+        <addElements tag="dict" once="true">
+            <!-- Добавте сюда ваши данные для p-list / Here add your data for the p-list -->
+
+            <!-- EXAMPLE
+            <key>NSPhotoLibraryAddUsageDescription</key>
+            <string>This app saves screen captures to the photo library.</string>
+            -->
+            
+            <!-- end -->
+        </addElements>
+    </iosPListUpdates>
+</root>

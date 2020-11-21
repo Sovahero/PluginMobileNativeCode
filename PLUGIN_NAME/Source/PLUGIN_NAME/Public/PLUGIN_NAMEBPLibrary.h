@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Async/Async.h"
@@ -18,8 +17,8 @@
 #include <stdlib.h>
 
 #include "PLUGIN_NAMEBPLibrary.generated.h"
-
 using namespace std;
+
 
 #if PLATFORM_ANDROID
 //В версии 4.24 и ниже используется gnustl в котором поддержка c++11 неполная
@@ -34,15 +33,17 @@ std::string to_string(T value)
 	os << value;
 	return os.str();
 }
+//-----
+
 #endif //-------------------------------------------------------------
 #endif //Android
 
+
 // #~~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //Диспатчер/Dispatcher
-//-------------------------------------------------------------------------------------------------------------
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTypeDispacth, FString, ReturnValue);
-//------------------------------------------------------------------------------------------------------------
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 // #~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,13 +61,18 @@ class UPLUGIN_NAMEBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 public:
+
+
 	// #~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//---Диспатчер/Dispatcher ---
 	static void FStaticFunctDispatch(FString ReturnValue);
 	static FTypeDispacth FStaticValueDispatch;
+		
+#if PLATFORM_IOS
+	static void CallBackCPP_IOS(NSString* sResult);
+#endif //PLATFORM_IOS
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~ end 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	//==== Переменные класса/Class variable==========================================
 
 
 	//==== Прототип класса/The prototype of the class ===================================
@@ -80,5 +86,9 @@ public:
 		static void ShowToastMobile(FString String, ToastLengthMessage length);
 	
 	UFUNCTION(BlueprintCallable, Category = "PLUGIN_NAME Category")
-		static void ExampleArray();
+		static void ExampleArray(FString& Arr1, FString& Arr2);
+
+	UFUNCTION(BlueprintCallable, Category = "PLUGIN_NAME Category")
+		static FString GetAbsolutePathTmpFolder(FString NameFile);
+
 };

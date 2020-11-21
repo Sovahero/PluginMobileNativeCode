@@ -50,8 +50,8 @@ public class PLUGIN_NAME : ModuleRules
         //~~~~~~~~Подключить статические или динамические библиотеки/Enable static or dynamic libraries~~~~~~~~~~~~~~
         LoadLib(Target);
     }
-    
-    //=====Подключить библиотеки в зависимости от платформы/Enable libraries depending on the platform==============================
+
+    //=====Подключить библиотеки в зависимости от платформы/Enable libraries depending on the platform================
     public void LoadLib(ReadOnlyTargetRules Target)
     {
         //----------Если платформа Windows/If the Windows platform-----------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ public class PLUGIN_NAME : ModuleRules
 
         //----------Если платформа Android/If the Android platform-------------------------------------------------------------------------------------
         else if (Target.Platform == UnrealTargetPlatform.Android)
-        {            
+        {
             string ArchArmV7a = "armeabi-v7a";
             string ArchArmV8a = "arm64-v8a";
 
@@ -96,7 +96,7 @@ public class PLUGIN_NAME : ModuleRules
             );
 
             //------------------- .h--------------------
-            PrivateIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Private", "Android") });            
+            PrivateIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Private", "Android") });
             //-------------------- .so ------------------
             string[] Libs = {
 				#if UE_4_25_OR_LATER
@@ -113,11 +113,11 @@ public class PLUGIN_NAME : ModuleRules
                 PublicAdditionalLibraries.Add(Path.Combine(PathThirdPartyAndroid, ArchArmV8a, "lib", Lib));
             }
             //----------------------------XML---------------------------------------
-            #if UE_4_25_OR_LATER
+#if UE_4_25_OR_LATER
 			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PathThirdPartyAndroid, "AndroidV25.xml"));
-            #else
+#else
             AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PathThirdPartyAndroid, "AndroidV24.xml"));
-            #endif
+#endif
         }
 
         //----------Если платформа IOS/If the IOS platform-------------------------------------------------------------------------------------------
@@ -128,10 +128,32 @@ public class PLUGIN_NAME : ModuleRules
                     "Launch"
                 }
             );
+            //----------------- p-list ------------------            
+            AdditionalPropertiesForReceipt.Add( "IOSPlugin", Path.Combine(ModuleDirectory, "Private", "IOS", "plist.xml") );
             //------------------- .h--------------------
             PrivateIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Private", "IOS") });
             PublicIncludePaths.Add(Path.Combine(PathThirdPartyIOS, "include"));
-            //------------------- framework---------------------------------------
+            //------------------- Public framework------------------------------------
+            PublicFrameworks.AddRange(
+                    new string[]
+                    {
+                        "CoreTelephony",
+                        "SystemConfiguration",
+                        "UIKit",
+                        "Foundation",
+                        "CoreGraphics",
+                        "MobileCoreServices",
+                        "StoreKit",
+                        "CFNetwork",
+                        "CoreData",
+                        "Security",
+                        "CoreLocation",
+                        "WatchConnectivity",
+                        "MediaPlayer",
+                        "CoreFoundation"
+                    }
+             );
+            //------------------- Private framework---------------------------------------
             string[] frameworks = {
                 /*"example", //example.framework
                     "example2" //example2.framework*/
