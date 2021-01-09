@@ -136,6 +136,7 @@ string AndroidUtils::GetTypeName(std::vector<anyType> anyArr) {
 }
 
 //=============== Recursion Method for Variadic Template===========================
+
 // ------------ GetType
 template<typename anyType, typename ...Args>
 void AndroidUtils::GetType(string& signatureString, anyType value, Args ...args)
@@ -305,13 +306,48 @@ jintArray AndroidUtils::CallJniIntArrayMethod(const ANSICHAR* ClassName, const A
 }
 
 //=============== Override Callback and Return JNI===========================
+
+// ------------ non-void case
+template <typename MethodType, typename... Args>
+MethodType AndroidUtils::isTypeJNI(type<MethodType>, const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
+{
+	MethodType returnType{};
+
+	string MethodSignature = "(";
+	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
+	GetType(MethodSignature, args...);
+	MethodSignature += ")";
+	MethodSignature += GetTypeName(returnType);
+
+	// В случае если функция что-то возвращает -  используйте присовение к переменной = или приведение типов += string(...)
+	// If the function returns something, use assignment to the variable = or casting += string(...)
+	if (isActivity)
+		return CallJNI(returnType, ClassName, FunctionName, MethodSignature.c_str(), FJavaWrapper::GameActivityThis, convertArg(args)...);
+	else
+		return CallJNI(returnType, ClassName, FunctionName, MethodSignature.c_str(), convertArg(args)...);
+}
+// ------------ void case
+template <typename... Args>
+void AndroidUtils::isTypeJNI(type<void>, const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
+{
+	string MethodSignature = "(";
+	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
+	GetType(MethodSignature, args...);
+	MethodSignature += ")";
+	MethodSignature += GetTypeName();
+
+	if (isActivity)
+		CallVoidJni(ClassName, FunctionName, MethodSignature.c_str(), FJavaWrapper::GameActivityThis, convertArg(args)...);
+	else
+		CallVoidJni(ClassName, FunctionName, MethodSignature.c_str(), convertArg(args)...);
+}
+
 // ------------ void
 template<typename ...Args>
 void AndroidUtils::CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
 {
 	CallJniVoidMethod(ClassName, MethodName, MethodSignature, args...);
 }
-
 // ------------ FString
 template<typename ...Args>
 FString AndroidUtils::CallJNI(FString str, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args)
@@ -371,7 +407,7 @@ TArray<int> AndroidUtils::CallJNI(TArray<int> iArr, const char* ClassName, const
 
 //============Вызов нативного кода Android из C++ / Calling native Android code from C++===============
 /**
-* Вызов собственного кода Java с возвращаемым значением / Calling native Java code with the return value
+* Вызов собственного кода Java  / Calling native Java code 
 *
 * @param ClassName - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
 * @param FunctionName - Имя вашей Java функции / Name of your Java function.
@@ -382,46 +418,8 @@ TArray<int> AndroidUtils::CallJNI(TArray<int> iArr, const char* ClassName, const
 * A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
 */
 template<typename MethodType, typename ...Args>
-MethodType AndroidUtils::CallNativeAndroid(const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
+MethodType AndroidUtils::CallJavaCode(const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
 {
-	MethodType returnType;
-
-	string MethodSignature = "(";
-	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
-	GetType(MethodSignature, args...);
-	MethodSignature += ")";
-	MethodSignature += GetTypeName(returnType);
-
-	// В случае если функция что-то возвращает -  используйте присовение к переменной = или приведение типов += string(...)
-	// If the function returns something, use assignment to the variable = or casting += string(...)
-	if (isActivity)
-		return CallJNI(returnType, ClassName, FunctionName, MethodSignature.c_str(), FJavaWrapper::GameActivityThis, convertArg(args)...);
-	else
-		return CallJNI(returnType, ClassName, FunctionName, MethodSignature.c_str(), convertArg(args)...);
+	return isTypeJNI(type<MethodType>{}, ClassName, FunctionName, isActivity, args...);
 }
 
-/**
-* Вызов собственного кода Java без возвращаемого значения / Calling native Java code without a return value
-*
-* @param ClassName - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
-* @param FunctionName - Имя вашей Java функции / Name of your Java function.
-* @param isActivity - Определяет нужно ли передавать Activity UE4 в Java / Determines whether to pass Activity UE4 to Java.
-* @param args... -
-* Список ваших параметров в Java функции(если тип переменной в Java коде специфичный например jobject,
-* его следует перед вызовом функции переконвертировать) /
-* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
-*/
-template<typename ...Args>
-void AndroidUtils::CallNativeAndroidVoid(const char* ClassName, const char* FunctionName, bool isActivity, Args ...args)
-{
-	string MethodSignature = "(";
-	MethodSignature += isActivity ? "Landroid/app/Activity;" : "";
-	GetType(MethodSignature, args...);
-	MethodSignature += ")";
-	MethodSignature += GetTypeName();
-
-	if (isActivity)
-		CallVoidJni(ClassName, FunctionName, MethodSignature.c_str(), FJavaWrapper::GameActivityThis, convertArg(args)...);
-	else
-		CallVoidJni(ClassName, FunctionName, MethodSignature.c_str(), convertArg(args)...);
-}

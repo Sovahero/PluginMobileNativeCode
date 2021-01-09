@@ -34,19 +34,22 @@ FString UPLUGIN_NAMEBPLibrary::HelloWorld(FString String)
 #if PLATFORM_ANDROID	
 	/*
 	* "com/epicgames/ue4/TestJavaClass" - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
+	*
 	* "HelloWorldOnAndroid" - Имя вашей Java функции / Name of your Java function.
+	*
 	* false - Определяет нужно ли передавать Activity UE4 в Java / Determines whether to pass Activity UE4 to Java.
+	*
 	* String -
 	* Список ваших параметров в Java функции(если тип переменной в Java коде специфичный например jobject,
 	* его следует перед вызовом функции переконвертировать) /
 	* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
 	*/
-	String = AndroidUtils::CallNativeAndroid<FString>("com/epicgames/ue4/TestJavaClass", "HelloWorldOnAndroid", false, String);
+	String = AndroidUtils::CallJavaCode<FString>("com/epicgames/ue4/TestJavaClass", "HelloWorldOnAndroid", false, String);
 
 #endif //Android
 
 #if PLATFORM_IOS
-	String = ObjConvert::ToFString( [TestIosClass HelloWorldOnIOS: String.GetNSString()] );
+	String = ObjConvert::ToFString([TestIosClass HelloWorldOnIOS : String.GetNSString()]);
 #endif// IOS
 
 	return String;
@@ -65,11 +68,11 @@ void UPLUGIN_NAMEBPLibrary::asyncHelloWorld(const FTypeDispacth& CallBackDispatc
 	UPLUGIN_NAMEBPLibrary::FStaticValueDispatch = CallBackDispatch;
 
 #if PLATFORM_ANDROID
-	AndroidUtils::CallNativeAndroidVoid("com/epicgames/ue4/TestJavaClass", "asyncHelloWorldOnAndroid", true, String);
+	AndroidUtils::CallJavaCode<void>("com/epicgames/ue4/TestJavaClass", "asyncHelloWorldOnAndroid", true, String);
 #endif //Android
 
 #if PLATFORM_IOS	
-	[TestIosClass asyncHelloWorldOnIOS: String.GetNSString()];
+	[TestIosClass asyncHelloWorldOnIOS : String.GetNSString()];
 #endif // IOS
 }
 
@@ -113,12 +116,12 @@ void UPLUGIN_NAMEBPLibrary::ShowToastMobile(FString String, ToastLengthMessage l
 	FString TextForToast = FString("Your message: " + String);
 
 	TextForToast += " Your phone: ";
-	TextForToast += FString(AndroidUtils::CallNativeAndroid<FString>("com/epicgames/ue4/TestJavaClass", "getBrand", false));
-	TextForToast += " " + FString(AndroidUtils::CallNativeAndroid<FString>("com/epicgames/ue4/TestJavaClass", "getModel", false));
+	TextForToast += FString(AndroidUtils::CallJavaCode<FString>("com/epicgames/ue4/TestJavaClass", "getBrand", false));
+	TextForToast += " " + FString(AndroidUtils::CallJavaCode<FString>("com/epicgames/ue4/TestJavaClass", "getModel", false));
 	TextForToast += " ID: ";
-	TextForToast += FString(AndroidUtils::CallNativeAndroid<FString>("com/epicgames/ue4/TestJavaClass", "getAndroidId", true));
+	TextForToast += FString(AndroidUtils::CallJavaCode<FString>("com/epicgames/ue4/TestJavaClass", "getAndroidId", true));
 
-	AndroidUtils::CallNativeAndroidVoid("com/epicgames/ue4/TestJavaClass", "showToast", true, TextForToast, length);
+	AndroidUtils::CallJavaCode<void>("com/epicgames/ue4/TestJavaClass", "showToast", true, TextForToast, length);
 
 #endif //Android
 
@@ -129,7 +132,7 @@ void UPLUGIN_NAMEBPLibrary::ShowToastMobile(FString String, ToastLengthMessage l
 	TextForToast += ObjConvert::ToFString([TestIosClass getModel]);
 
 	//Вызов функции через паттерн одиночка / Calling a function using the singleton pattern
-	[[TestIosClass Singleton]showToast: TextForToast.GetNSString() Duration: length];
+	[[TestIosClass Singleton]showToast:TextForToast.GetNSString() Duration : length];
 
 #endif// IOS
 }
@@ -154,17 +157,17 @@ void UPLUGIN_NAMEBPLibrary::ExampleArray(FString& Arr1, FString& Arr2)
 	//Support returnType = FString, int, float
 	TArray<FString> TestStrArr;
 #if PLATFORM_ANDROID	
-	TestStrArr = AndroidUtils::CallNativeAndroid<TArray<FString>>("com/epicgames/ue4/TestJavaClass", "TestArray", false, a1, a2, a3, a4, a5);
+	TestStrArr = AndroidUtils::CallJavaCode<TArray<FString>>("com/epicgames/ue4/TestJavaClass", "TestArray", false, a1, a2, a3, a4, a5);
 #endif //Android
 
 #if PLATFORM_IOS
 	TestStrArr = ObjConvert::NSMutableArrayToTArrayFString(
 		[TestIosClass
-		TestArray: ObjConvert::TArrayFStringToNSMutableArray(a1)
-		b: ObjConvert::TArrayNumToNSMutableArray(a2)
-		i: ObjConvert::TArrayNumToNSMutableArray(a3)
-		f: ObjConvert::TArrayNumToNSMutableArray(a4)
-		l: ObjConvert::TArrayNumToNSMutableArray(a5)
+		TestArray : ObjConvert::TArrayFStringToNSMutableArray(a1)
+		b : ObjConvert::TArrayNumToNSMutableArray(a2)
+		i : ObjConvert::TArrayNumToNSMutableArray(a3)
+		f : ObjConvert::TArrayNumToNSMutableArray(a4)
+		l : ObjConvert::TArrayNumToNSMutableArray(a5)
 		]);
 #endif //PLATFORM_IOS
 
@@ -182,12 +185,12 @@ FString UPLUGIN_NAMEBPLibrary::GetAbsolutePathTmpFolder(FString NameFile)
 {
 #if PLATFORM_ANDROID
 	// "storage/emulated/0/Android/data/data/%PROJECT_NAME%/"
-	FString sPath = AndroidUtils::CallNativeAndroid<FString>("com/epicgames/ue4/TestJavaClass", "GetExternalFilesDir", true);
+	FString sPath = AndroidUtils::CallJavaCode<FString>("com/epicgames/ue4/TestJavaClass", "GetExternalFilesDir", true);
 	return sPath + NameFile;
 #endif //Android
 
 #if PLATFORM_IOS
-	// "/var/mobile/Containers/Data/Application/23D4996A6-BCC9-4C2F-A8B4-306BEB087BDB/Library/Caches/"
+	// "/var/mobile/Containers/Data/Application/%PROJECT_ID%/Library/Caches/"
 	FString sPath = ObjConvert::ToFString([TestIosClass getTmpFilePath]);
 	return sPath + NameFile;
 #endif //PLATFORM_IOS

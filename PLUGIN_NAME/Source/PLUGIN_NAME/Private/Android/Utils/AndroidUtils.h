@@ -13,6 +13,10 @@ using namespace std;
 class AndroidUtils
 {
 public:	
+	// --- https://stackoverflow.com/questions/47373354/c-void-argument-with-variadic-template ---
+	template <typename T>
+	struct type { };
+	
 	//------------ Convert ---------------------------------------------------	
 	template <typename anyType>
 	static const anyType& convertArg(const anyType& value);
@@ -67,6 +71,15 @@ public:
 	static jintArray CallJniIntArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...);
 
 	//-----------------------------------------------------------------------------------------------	
+	
+	// ------------ non-void case
+	template<typename MethodType, typename ...Args>
+	static MethodType isTypeJNI(type<MethodType>, const char* ClassName, const char* FunctionName, bool isActivity, Args ...args);
+	
+	// ------------ void case
+	template <typename... Args>
+	static void isTypeJNI(type<void>, const char* ClassName, const char* FunctionName, bool isActivity, Args ...args);
+
 	// void
 	template <typename... Args>
 	static void CallVoidJni(const char* ClassName, const char* MethodName, const char* MethodSignature, Args... args);
@@ -108,12 +121,9 @@ public:
 	static TArray<int> CallJNI(TArray<int> iArr, const char* ClassName, const char* MethodName, const char* MethodSignature, Args ...args);
 
 
-
-
-
 	//============Вызов нативного кода Android из C++ / Calling native Android code from C++===============
 	/**
-	* Вызов собственного кода Java с возвращаемым значением / Calling native Java code with the return value
+	* Вызов собственного кода Java / Calling native Java code 
 	*
 	* @param ClassName - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
 	* @param FunctionName - Имя вашей Java функции / Name of your Java function.
@@ -124,20 +134,7 @@ public:
 	* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
 	*/
 	template <typename MethodType, typename... Args>
-	static MethodType CallNativeAndroid(const char* ClassName, const char* FunctionName, bool isActivity, Args... args);
+	static MethodType CallJavaCode(const char* ClassName, const char* FunctionName, bool isActivity, Args... args);
 
-	/**
-	* Вызов собственного кода Java без возвращаемого значения / Calling native Java code without a return value
-	*
-	* @param ClassName - package(используется com/epicgames/ue4) и имя вашего Java класса / package (used by com/epicgames/ue4) and the name of your Java class.
-	* @param FunctionName - Имя вашей Java функции / Name of your Java function.
-	* @param isActivity - Определяет нужно ли передавать Activity UE4 в Java / Determines whether to pass Activity UE4 to Java.
-	* @param args... -
-	* Список ваших параметров в Java функции(если тип переменной в Java коде специфичный например jobject,
-	* его следует перед вызовом функции переконвертировать) /
-	* A list of your parameters in the Java function(if the variable type in the Java code is specific, such as jobject, it should be converted before calling the function).
-	*/
-	template <typename... Args>
-	static void CallNativeAndroidVoid(const char* ClassName, const char* FunctionName, bool isActivity, Args... args);
 	//========================================================
 };

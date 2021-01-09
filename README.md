@@ -1,3 +1,4 @@
+
 ![Logo](screenshot/Logo2.png)
 
 # Mobile Native Code Plugin for Unreal Engine 4
@@ -23,7 +24,7 @@ When developing a mobile application based on Unreal engine 4, sooner or later i
 
 
 # Особенности / Features
-![Java](screenshot/CallJava2.png)
+![Java](screenshot/CallJava3.png)
 ![ObjC](screenshot/Call_IOS1.png)
 ## **(*Rus*)**
 * Требуется Unreal Engine 4.21 или выше.
@@ -126,19 +127,18 @@ Located on the path:
 * Перейдите в *\PLUGIN_NAME\Source\PLUGIN_NAME\Private* и откройте *PLUGIN_NAMEBPLibrary.cpp*.
   В данном файле продемонстрированы 5 функции для вызова Java кода.
 
-* Java код вызывается с помощью **AndroidUtils::CallNativeAndroid< ReturnType >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**, если функция что-то возвращает.
+* Java код вызывается с помощью **AndroidUtils::CallJavaCode< *ReturnType* >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**
 
-   В случае если Java функция ничего не возвращает (Void) то вызывается **AndroidUtils::CallNativeAndroidVoid("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2","arg3")**
-
-* *ReturnType* указывается в зависимости от возвращаемого типа. *1 аргумент* это package+название вашего класса, *2 аргумент* название вашей функции, *3 аргумент* указывает - нужно ли передать Activity данного сеанса. Далее кол-во аргументов может быть передано сколько угодно, в зависимости от того, что принимает ваша функция.
-
-* Если ваша Java функция принимает специфичный тип (напр. *jobject*), то перед вызовом функции **CallNativeAndroid** нужно вашу C++ переменную предварительно конвертировать в *jobject*. Больше информации о конвертации можно найти в файле *PLUGIN_NAME\Source\PLUGIN_NAME\Private\Android\Utils\JavaConvert.cpp*
+>* *ReturnType* указывается в зависимости от возвращаемого типа. 
+>*1 аргумент* это package+название вашего класса, 
+>*2 аргумент* название вашей функции, 
+>*3 аргумент* указывает - нужно ли передать Activity данного сеанса. 
+>Далее кол-во аргументов может быть передано сколько угодно, в зависимости от того, что принимает >ваша функция.
 
 * Асинхронный вызов Java происходит посредствам диспетчеров - код Java вызывает функцию C++, которая в свою очередь активирует его.
 
 * (**Не рекомендуется**) Вы можете указывать свой *package* для Java классов. 
 Перейдите в *PLUGIN_NAME\Source\PLUGIN_NAME\ThirdParty\Android* и в файлах *AndroidV24.xml* (*Если UE4.21-UE4.24*) и *AndroidV25.xml* (*Если UE4.25 и Выше*) укажите новый путь копирования и объявление своего класса.
-
 
 * При добавлении нового Java класса или изменении текущего - удаляйте папку **Intermediate** в папке вашего проекта.
 
@@ -156,13 +156,13 @@ To call your own Java class:
 * Go to *PLUGIN_NAME\Source\PLUGIN_NAME\Private* and open *PLUGIN_NAMEBPLibrary.cpp*.
 This file demonstrates 5 functions for calling Java code.
 
-* Java code is called using **AndroidUtils:: CallNativeAndroid< ReturnType >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2", "arg3")** if the function returns something.
+* Java code is called using **AndroidUtils::CallJavaCode< *ReturnType* >("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1","arg2", "arg3")**
 
-  If the Java function returns nothing (Void) then called **AndroidUtils:: CallNativeAndroidVoid ("com/epicgames/ue4/YourClass", "YourFunction", false, "arg1", "arg2", " arg3")**
-
-* *ReturnType* is specified depending on the return type. *1 argument* is package+the name of your class, *2 argument* the name of your function, *3 argument* indicates whether to pass the activity of this session. Further, the number of arguments can be passed as many as you want, depending on what your function accepts.
-
-* If your Java function accepts a specific type (e.g. *jobject*), then before calling the **CallNativeAndroid function** you need to convert your C++ variable to *jobject* first. More information about conversion can be found in the file *PLUGIN_NAME\Source\PLUGIN_NAME\Private\Android\Utils\JavaConvert.cpp*
+>* *ReturnType* is specified depending on the return type. 
+>*1 argument* is package+the name of your class, 
+>*2 argument* the name of your function, 
+>*3 argument* indicates whether to pass the activity of this session. 
+>Further, the number of arguments can be passed as many as you want, depending on what your function >accepts.
 
 * Asynchronous Java invocation occurs through dispatchers UE4 - Java code calls a C++ function, which in turn activates it.
 

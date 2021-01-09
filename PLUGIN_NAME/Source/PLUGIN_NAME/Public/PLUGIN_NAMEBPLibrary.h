@@ -25,7 +25,9 @@ using namespace std;
 //Нужный функционал дописывается самостоятельно в этом блоке
 // In version 4.24 and below, gnustl is used in which C++11 support is incomplete
 // the Necessary functionality is added independently in this block
-#if ENGINE_MINOR_VERSION<=24 //----------------------
+
+#if ENGINE_MINOR_VERSION<=24//----------------------
+
 template <typename T>
 std::string to_string(T value)
 {
@@ -33,7 +35,6 @@ std::string to_string(T value)
 	os << value;
 	return os.str();
 }
-//-----
 
 #endif //-------------------------------------------------------------
 #endif //Android
