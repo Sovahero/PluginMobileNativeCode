@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+This file is used for additional steps in the gradle build for Android.
+It uses its own UPL language written by the developers of Unreal Engine 4. To learn more, see the documentation:
+https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLanguage/index.html
+-->
+
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- init section is always evaluated once per architecture -->
+  <init>
+    <log text="MobileNativeCode Android -> Adding properties to Manifest and Gradle"/>
+    <trace enable="true"/>
+    
+    <setBool result="bSupported" value="false"/>
+
+    <isArch arch="armeabi-v7a">
+      <setBool result="bSupported" value="true"/>
+    </isArch>
+
+    <isArch arch="arm64-v8a">
+      <setBool result="bSupported" value="true"/>
+    </isArch>
+
+    <if condition="bSupported">
+      <false>
+        <log text="WARNING: this architecture is not supported!"/>
+      </false>
+    </if>
+
+  </init>
+
+
+  <!-- optional files or directories to copy or delete from Intermediate/Android/APK before ndk-build -->
+  <prebuildCopies>
+    <copyDir src="$S(PluginDir)/Private/Android/Java" dst="$S(BuildDir)/src/com/Plugins/MobileNativeCode" />
+    <copyDir src="$S(PluginDir)/Private/Android/Java/drawable" dst="$S(BuildDir)/res/drawable" />
+    <copyDir src="$S(PluginDir)/Private/Android/Java/values" dst="$S(BuildDir)/res/values" />
+  </prebuildCopies>
+
+
+  <!-- Library data is copied to the linker during build. Optional files or directories to copy or delete from Intermediate/Android/APK after ndk-build -->
+  <resourceCopies>
+
+    <!-- Example of adding*. so dynamic libraries when building android for different architectures. -->
+    <!-- libc++_shared.so already added, but if you use the engine version 4.24 or less, you can uncomment these lines -->
+    
+    <isArch arch="armeabi-v7a">      
+      <!-- <copyFile src="$S(PluginDir)/ThirdParty/Android/armeabi-v7a/lib/libc++_shared.so"
+                dst="$S(BuildDir)/libs/armeabi-v7a/libc++_shared.so" /> -->
+    </isArch>
+
+    <isArch arch="arm64-v8a">
+      <!-- <copyFile src="$S(PluginDir)/ThirdParty/Android/arm64-v8a/lib/libc++_shared.so"
+                dst="$S(BuildDir)/libs/arm64-v8a/libc++_shared.so" /> -->
+    </isArch>
+
+  </resourceCopies>
+
+
+  <!-- optional properties to add to gradle.properties -->
+  <gradleProperties>
+    <insert>
+      android.useAndroidX=true
+      android.enableJetifier=true
+    </insert>
+  </gradleProperties>
+
+
+  <!-- Optional additions to proguard -->
+  <proguardAdditions>
+    <insert>
+      <!-- Disabling class obfuscation -->
+      -dontwarn com.Plugins.**
+      -keep class com.Plugins.** { *; }
+      -keep interface com.Plugins.** { *; }
+      -keep public class com.Plugins.MobileNativeCode.** { public protected *; }
+
+      -dontwarn androidx.**
+      -keep class androidx.** { *; }
+      -keep interface androidx.** { *; }
+
+    </insert>
+  </proguardAdditions>
+
+
+  <!-- Enable libraries in the app itself (Sometimes you don't need to). Optional libraries to load in GameActivity.java before libUE4.so -->
+  <soLoadLibrary>
+    <!--<loadLibrary name="c++_shared" 
+                              failmsg="XML! libc++_shared.so library not loaded and required!" />-->
+  </soLoadLibrary>
+
+
+  <!-- optional updates applied to AndroidManifest.xml -->
+  <androidManifestUpdates>
+    <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/>
+    
+    
+    <addElements tag="application">      
+      <!-- Your lines that you want to add to the "application" section -->
+
+      
+    </addElements>
+
+    <!-- Adding your own Permission -->
+    <addPermission android:name="com.android.permission.READ_EXTERNAL_STORAGE"/>
+    <addPermission android:name="com.android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+  </androidManifestUpdates>
+
+
+  <!-- optional app build.gradle additions -->
+  <buildGradleAdditions>
+    <insert>
+
+      ext {
+          android {
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                  }
+              }
+          }
+      }
+
+      repositories {
+        mavenCentral()
+        jcenter()
+      }
+
+      <!-- Here you can specify your own dependencies for downloading *.AAR libraries over the Internet. -->
+      dependencies {
+        implementation 'com.google.guava:guava:28.2-android'
+      }
+
+    </insert>
+  </buildGradleAdditions>
+
+
+  <!-- optional base build.gradle additions -->
+  <baseBuildGradleAdditions>
+    <insert>
+      allprojects {
+        def mappings = [
+          'android.support.annotation': 'androidx.annotation',
+          'android.arch.lifecycle': 'androidx.lifecycle',
+          'android.support.v4.app.NotificationCompat': 'androidx.core.app.NotificationCompat',
+          'android.support.v4.app.ActivityCompat': 'androidx.core.app.ActivityCompat',
+          'android.support.v4.content.ContextCompat': 'androidx.core.content.ContextCompat',
+          'android.support.v4.app.NotificationManagerCompat': 'androidx.core.app.NotificationManagerCompat',
+          'android.support.v4.content.FileProvider': 'androidx.core.content.FileProvider',
+          'android.support.v13.app.FragmentCompat': 'androidx.legacy.app.FragmentCompat',
+          'android.arch.lifecycle.Lifecycle': 'androidx.lifecycle.Lifecycle',
+          'android.arch.lifecycle.LifecycleObserver': 'androidx.lifecycle.LifecycleObserver',
+          'android.arch.lifecycle.OnLifecycleEvent': 'androidx.lifecycle.OnLifecycleEvent',
+          'android.arch.lifecycle.ProcessLifecycleOwner': 'androidx.lifecycle.ProcessLifecycleOwner',
+        ]
+
+      beforeEvaluate { project ->
+        project.rootProject.projectDir.traverse(type: groovy.io.FileType.FILES, nameFilter: ~/.*\.java$/) { f ->
+            mappings.each { entry ->
+              if (f.getText('UTF-8').contains(entry.key)) {
+                println "Updating ${entry.key} to ${entry.value} in file ${f}"
+                ant.replace(file: f, token: entry.key, value: entry.value)
+              }
+            }
+          }
+        }
+      }
+    </insert>
+  </baseBuildGradleAdditions>
+
+
+  <!--  optional base build.gradle buildscript additions -->
+  <buildscriptGradleAdditions>
+
+  </buildscriptGradleAdditions>
+
+
+  <!-- optional files or directories to copy or delete from Intermediate/Android/APK before Gradle -->
+  <gradleCopies>
+
+  </gradleCopies>
+
+
+  <!--  optional additions to generated build.xml before ${sdk.dir}/tools/ant/build.xml import -->
+  <buildXmlPropertyAdditions>
+
+  </buildXmlPropertyAdditions>
+
+
+  <!-- optional minimum SDK API level required -->
+  <minimumSDKAPI>
+
+  </minimumSDKAPI>
+
+
+</root>

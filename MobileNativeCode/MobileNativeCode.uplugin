@@ -1,0 +1,33 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "2.0",
+	"FriendlyName": "MobileNativeCode",
+	"Description": "Code utils for mobile platforms",
+	"Category": "Mobile",
+	"CreatedBy": "Sovahero",
+	"CreatedByURL": "",
+	"DocsURL": "https://github.com/Sovahero/PluginMobileNativeCode",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/Sovahero/PluginMobileNativeCode/issues",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": true,
+	"EnabledByDefault": false,
+	"RequiresBuildPlatform": true,
+	"Modules": [
+		{
+			"Name": "MobileNativeCode",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"Android",
+				"IOS"
+			]
+		}
+	]
+}
