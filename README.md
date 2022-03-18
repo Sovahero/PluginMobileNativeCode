@@ -26,7 +26,7 @@ Located on the path:
 > **IOS** - MobileNativeCode\Source\MobileNativeCode\Private\IOS\ObjC\
 
 * Visual Studio/(If IOS - Xcode) is needed to build the plugin
-* Tested on 2 versions of Unreal Engine 4 (4.24/4.25) and 3 phones
+* Tested on 2 versions of Unreal Engine 4 (4.24/4.25/4.26/4.27) and 3 phones
 * The entire code is divided into blocks for easier understanding
 
 > // #~~~~~~~~~ begin 1 ~~~~~~~~~~

@@ -94,9 +94,7 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
 
   <!-- optional updates applied to AndroidManifest.xml -->
   <androidManifestUpdates>
-    <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/>
-    
-    
+        
     <addElements tag="application">      
       <!-- Your lines that you want to add to the "application" section -->
 
