@@ -10,6 +10,7 @@
 #include "MobileNativeCodeBlueprint.generated.h"
 
 
+
 // #~~~~~~~~~~~~~~~~~~~~~~~~~ begin 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //-- Dispatcher
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTypeDispacth, const FString&, ReturnValue); // DispatchName, ParamType, ParamName  
@@ -20,7 +21,6 @@ UCLASS()
 class MOBILENATIVECODE_API UMobileNativeCodeBlueprint : public UBlueprintFunctionLibrary
 {
   GENERATED_BODY()
-
 public:
   UMobileNativeCodeBlueprint(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {};
 

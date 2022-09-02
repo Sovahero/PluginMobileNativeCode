@@ -1,13 +1,14 @@
 ﻿#pragma once
-//==========================================
+
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 #import <sys/utsname.h>
+#import <StoreKit/StoreKit.h>
 
 using namespace std;
 
-@interface IosNativeUI : NSObject
+@interface IosNativeUI : UIViewController
 
 +(IosNativeUI*)Singleton;
 

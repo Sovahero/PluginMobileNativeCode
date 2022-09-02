@@ -1,4 +1,4 @@
-#import "IOS/ObjC/IosNativeUI.h"
+#import "IosNativeUI.h"
 
 @implementation IosNativeUI
 
@@ -18,7 +18,8 @@
     return staticIosNativeUI;
 }
 
--(void)showToast: (NSString*)message Duration: (int)duration
+-(void)showToast: (NSString*)message 
+        Duration: (int)duration
 {
     dispatch_async(dispatch_get_main_queue(), ^{
 
@@ -37,7 +38,7 @@
                                                                message:message
                                                         preferredStyle:UIAlertControllerStyleAlert];
 
-        UIViewController *top = [UIApplication sharedApplication].keyWindow.rootViewController;
+        UIViewController *top = [[UIApplication sharedApplication] delegate].window.rootViewController;
         [top presentViewController:alert animated:YES completion: nil];        
 
         dispatch_after(
@@ -45,6 +46,7 @@
                 [alert dismissViewControllerAnimated:YES completion:nil];
             }
         );
+
 	});
 }
 

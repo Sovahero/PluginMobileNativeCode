@@ -52,10 +52,10 @@ FString UMobileNativeCodeBlueprint::HelloWorld(FString MyStr /*= "Hello World"*/
 
   MyStr = AndroidUtils::CallJavaCode<FString>(
     "com/Plugins/MobileNativeCode/HelloWorldClass",     // package (used by com/Plugins/MobileNativeCode) and the name of your Java class.
-    "HelloWorldOnAndroid",                                                //Name of your Java function.
-    "",                                                                                     //Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
-    false,                                                                                 //Determines whether to pass Activity UE4 to Java.
-    MyStr                                                                               //A list of your parameters in the Java function.
+    "HelloWorldOnAndroid",                              //Name of your Java function.
+    "",                                                 //Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
+    false,                                              //Determines whether to pass Activity UE4 to Java.
+    MyStr                                               //A list of your parameters in the Java function.
   );
 
 #endif //Android
@@ -173,10 +173,10 @@ void UMobileNativeCodeBlueprint::ExampleArray(FString& Arr1, FString& Arr2)
 
   TestStrArr = AndroidUtils::CallJavaCode<TArray<FString>>(
     "com/Plugins/MobileNativeCode/ExampleArrayClass",             // package (used by com/Plugins/MobileNativeCode) and the name of your Java class.
-    "TestArray",                                                                                  // Name of your Java function.
-    "",                                                                                                  // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
-    false,                                                                                              // Determines whether to pass Activity UE4 to Java.
-    a1, a2, a3, a4, a5                                                                            //A list of your parameters in the Java function.
+    "TestArray",                                                  // Name of your Java function.
+    "",                                                           // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
+    false,                                                        // Determines whether to pass Activity UE4 to Java.
+    a1, a2, a3, a4, a5                                            //A list of your parameters in the Java function.
   );
 
 #endif //Android
@@ -247,18 +247,18 @@ void UMobileNativeCodeBlueprint::ExampleMyJavaObject(FString& JavaBundle)
 
   jobject myJavaObject = AndroidUtils::CallJavaCode<jobject>(
     "com/Plugins/MobileNativeCode/MyJavaObjects",  // package (used by com/Plugins/MobileNativeCode) and the name of your Java class.
-    "getBundleJava",                                                        // Name of your Java function.
-    "()Landroid/os/Bundle;",                                            // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
-    false                                                                            // Determines whether to pass Activity UE4 to Java.
+    "getBundleJava",                               // Name of your Java function.
+    "()Landroid/os/Bundle;",                       // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
+    false                                          // Determines whether to pass Activity UE4 to Java.
     );
 
   // Functions such as putString and putDouble are defined inside Bunde. Let's call them with our parameters:
 
   AndroidUtils::CallJavaCode<void>(
     myJavaObject,         // the type of jobject from which you want to call a local Java function
-    "putFloat",               // Name of Java function.
-    "",                            // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
-    "myKey", 1234.f     // A list of your parameters in the Java function.
+    "putFloat",           // Name of Java function.
+    "",                   // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
+    "myKey", 1234.f       // A list of your parameters in the Java function.
     );
 
   AndroidUtils::CallJavaCode<void>(
@@ -272,8 +272,8 @@ void UMobileNativeCodeBlueprint::ExampleMyJavaObject(FString& JavaBundle)
   // Let's see what's inside our Bundle
   JavaBundle = AndroidUtils::CallJavaCode<FString>(
     myJavaObject,         // the type of jobject from which you want to call a local Java function
-    "toString",               // Name of Java function.
-    ""                             // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
+    "toString",           // Name of Java function.
+    ""                    // Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
     );
 
   // After you have finished working with your jobject, you need to delete it

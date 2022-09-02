@@ -20,8 +20,9 @@ https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Programs/Un
           
             <!-- Here add your data for the p-list -->
 
-            <!-- EXAMPLE
-
+            <!-- 
+            EXAMPLE
+            
             <key>NSPhotoLibraryAddUsageDescription</key>
             <string>This app saves screen captures to the photo library.</string>
 
@@ -31,6 +32,10 @@ https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Programs/Un
             <key>NSGKFriendListUsageDescription</key>
             <string>This app compares achievements from the game among your friends.</string>
 
+            <key>UIRequiredDeviceCapabilities</key>
+            <array>
+                <string>gamekit</string>
+            </array>
             -->
 
             <!-- end -->

@@ -162,6 +162,11 @@ public class MobileNativeCode : ModuleRules
         //== If the IOS platform
         else if (Target.Platform == UnrealTargetPlatform.IOS)
         {
+            //----------------- .define--------------------
+            {/* Redefine for the xcode compiler */}
+            PublicDefinitions.Add("TARGET_TV_OS=0");
+            PublicDefinitions.Add("BUCK=1");
+            
             PrivateDependencyModuleNames.AddRange(new string[]
                 {
                     "Launch"
