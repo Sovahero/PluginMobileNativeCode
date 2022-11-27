@@ -51,10 +51,10 @@ public:
 	static jlong GetJavaLong(long l);
 
 	// FString to jstring
-	static jstring GetJavaString(FString string);
+	static jstring GetJavaString(const FString& string);
 
 	// string to jstring
-	static jstring GetJavaString(string str);
+	static jstring GetJavaString(const string& str);
 
 	// const char* to jstring
 	static jstring GetJavaString(const char* str);

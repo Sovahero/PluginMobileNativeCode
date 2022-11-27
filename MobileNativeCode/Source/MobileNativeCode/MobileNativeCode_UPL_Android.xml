@@ -94,7 +94,18 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
 
   <!-- optional updates applied to AndroidManifest.xml -->
   <androidManifestUpdates>
-        
+
+    <!-- For target SDK 31 update the SplashActivity activity -->
+    <loopElements tag="activity">
+      <setStringFromAttribute result="activityName" tag="$" name="android:name"/>
+      <setBoolIsEqual result="bSplashActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.SplashActivity"/>
+      <if condition="bSplashActivity">
+        <true>
+          <addAttribute tag="$" name="android:exported" value="true"/>
+        </true>
+      </if>
+    </loopElements>
+    
     <addElements tag="application">      
       <!-- Your lines that you want to add to the "application" section -->
       
