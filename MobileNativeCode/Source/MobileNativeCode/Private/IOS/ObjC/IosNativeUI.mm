@@ -19,7 +19,7 @@
 }
 
 -(void)showToast: (NSString*)message 
-        Duration: (int)duration
+              Duration: (int)duration
 {
     dispatch_async(dispatch_get_main_queue(), ^{
 

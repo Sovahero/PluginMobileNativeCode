@@ -5,18 +5,53 @@
 #include <Android/AndroidJava.h>
 
 #include "JavaConvert.h"
+#include "MobileNativeCodeBlueprint.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 
+
 using namespace std;
-
-
-
 class AndroidUtils
+
+
+
 {
+private:
+  static bool m_supportedPlatform;
+
 public:
+  static void Initialization()
+  {
+    m_supportedPlatform = true;
+    m_supportedPlatform = (bool)CallJavaCode<int>(
+      "com/Plugins/MobileNativeCode/MobileNativeCode",
+      "Initialization",
+      "",
+      false
+    );
+
+    if(!m_supportedPlatform)
+    {
+      UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> The mobile platform is not supported, all further Java functions will not be called!"));
+    }
+    else
+    {
+      UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Init on phone: %s"), *UMobileNativeCodeBlueprint::GetModelDevice());
+    }
+  }
+
+  //Can the mobile platform call functions
+  static int isSupportPlatform()
+  {
+    if(!m_supportedPlatform)
+    {
+      UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> The mobile platform is not supported, all further Java functions will not be called!"));
+    }
+    return m_supportedPlatform;
+  }
+
   //-- Free memory
   static bool DeleteJavaObject(jobject JavaObject)
   {
@@ -121,7 +156,7 @@ public:
   {
     return "S";
   }
-  static std::string GetTypeName(int i)
+  static std::string GetTypeName(int)
   {
     return "I";
   }
@@ -197,6 +232,9 @@ public:
   //========== UserObjectClass ==============
   static void CallJniVoidMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniVoidMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -219,6 +257,9 @@ public:
 
   static FString CallJniStringMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return TEXT("");
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniStringMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -245,6 +286,9 @@ public:
   }
   static bool CallJniBoolMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return false;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniBoolMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -268,6 +312,9 @@ public:
   }
   static int CallJniIntMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return 0;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniIntMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -291,6 +338,9 @@ public:
   }
   static long CallJniLongMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return 0;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniLongMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -314,6 +364,9 @@ public:
   }
   static jobject CallJniObjectMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniObjectMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -340,6 +393,9 @@ public:
   }
   static jobjectArray CallJniObjectArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniObjectArray [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -365,6 +421,9 @@ public:
   }
   static jfloatArray CallJniFloatArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniFloatArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -388,6 +447,9 @@ public:
   }
   static jintArray CallJniIntArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniIntArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -411,6 +473,9 @@ public:
   }
   static jlongArray CallJniLongArrayMethod(const ANSICHAR* ClassName, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallJniLongArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     JNIEnv* Env = FAndroidApplication::GetJavaEnv();
@@ -436,6 +501,9 @@ public:
   //========== JavaObjectClass ==============
   static void CallObjectJniVoidMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniVoidMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -460,6 +528,9 @@ public:
 
   static FString CallObjectJniStringMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return TEXT("");
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniStringMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -489,6 +560,9 @@ public:
   }
   static bool CallObjectJniBoolMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return false;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniBoolMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -514,6 +588,9 @@ public:
   }
   static int CallObjectJniIntMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return 0;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniIntMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -539,6 +616,9 @@ public:
   }
   static long CallObjectJniLongMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return 0;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniLongMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -564,6 +644,9 @@ public:
   }
   static jobject CallObjectJniObjectMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniObjectMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -592,6 +675,9 @@ public:
   }
   static jobjectArray CallObjectJniObjectArrayMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniObjectArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -619,6 +705,9 @@ public:
   }
   static jfloatArray CallObjectJniFloatArrayMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniFloatArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -644,6 +733,9 @@ public:
   }
   static jintArray CallObjectJniIntArrayMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniIntArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
     if (!object)
       UE_LOG(LogTemp, Error, TEXT("MobileNativeCode -> Err: jobject = null  [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
@@ -669,6 +761,9 @@ public:
   }
   static jlongArray CallObjectJniLongArrayMethod(jobject object, const ANSICHAR* MethodName, const ANSICHAR* MethodSignature, ...)
   {
+    if (!m_supportedPlatform)
+      return nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("MobileNativeCode -> Method CallObjectJniLongArrayMethod [%s][%s]"), *FString(MethodName), *FString(MethodSignature));
 
     if (!object)
@@ -929,11 +1024,11 @@ public:
   ///============Calling native Android code from C++===============
 
   /**
-  * @param ClassName - package (used by com/Plugins/MobileNativeCode) and the name of your Java class.
+  * @param ClassName - package and the name of your Java class.
   * @param FunctionName -  Name of your Java function.
   * @param OverrideSignature -  Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
   * @param isActivity -  Determines whether to pass Activity UE4 to Java.
-  * @param args - A list of your parameters in the Java function.
+  * @param args... - A list of your parameters in the Java function.
   */
   template<typename MethodType, typename ...Args>
   static MethodType CallJavaCode(const char* ClassName, const char* FunctionName, const char* OverrideSignature, bool isActivity, Args ...args)
@@ -945,7 +1040,7 @@ public:
   * @param JavaObjectClass - The object type which you need to call methods from the JAVA API.
   * @param FunctionName -  Name of your Java function.
   * @param OverrideSignature -  Set your own signature instead of an automatic one (Send an empty one if you need an automatic one).
-  * @param args - A list of your parameters in the Java function.
+  * @param args... - A list of your parameters in the Java function.
   */
   template<typename MethodType, typename ...Args>
   static MethodType CallJavaCode(jobject JavaObjectClass, const char* FunctionName, const char* OverrideSignature, Args ...args)

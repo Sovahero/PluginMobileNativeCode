@@ -1,37 +1,35 @@
 
 ![Logo](screenshot/Logo3.png)
 
-# Mobile Native Code Plugin for Unreal Engine 4
-When developing a mobile application based on Unreal engine 4, you often need to get access to functionality that is not available in C++/Blueprint. For example:
-* Get absolute paths to temporary folders to save your own files
-* Read information from sensors (Accelerometer, Barometer, etc.)
-* Get information about the phone
-* Interact with other apps
-* Connect different advertising and analytics services (Facebook, Firebase, Admob)
+# Mobile Native Code Plugin for Unreal Engine 4/5
+Plugin providing native mobile functionality access for Unreal Engine projects. Suitable for cases when you need:
+* Access to device-specific features and file system
+* Sensor data (Accelerometer, Barometer, etc.)
+* Device information
+* Inter-app communication
+* Integration with mobile services (Facebook, Firebase, Admob)
 
-**Mobile Native Code Plugin** - Serves as the basis for the native mobile plugin in Unreal Engine 4 for Android and iOS platforms. It provides a convenient call to native Java code(JNI) and Objective-C, as well as examples of connecting static and dynamic libraries to the build system. Add it to your project and start expanding it with your features.
+**Mobile Native Code Plugin** serves as a foundation for native mobile development in Unreal Engine, supporting both Android and iOS platforms. It simplifies native code calls (Java/JNI and Objective-C) and provides examples of integrating external libraries.
+
 
 # Features
 ![Java](screenshot/CallJava4.png)
 
-* Requires Unreal Engine 4.21 or higher.
-* Builds on ndk-14 and ndk-21 for Android
+* Engine Support: UE 4.21+ and UE 5.0+
+* Used in commercial projects (UE 4.25-5.4)
 * Calling native Java code with a single function from C++
 * Examples of functions for interacting with native code
-Located on the path:
-> **Blueprint\C++** - MobileNativeCode\Source\MobileNativeCode\Private\MobileNativeCodeBlueprint.cpp
 
- > **Android** - MobileNativeCode\Source\MobileNativeCode\Private\Android\Java\
+Source locations:
+> **Blueprint/C++**: MobileNativeCode/Source/MobileNativeCode/Private/MobileNativeCodeBlueprint.cpp
 
-> **IOS** - MobileNativeCode\Source\MobileNativeCode\Private\IOS\ObjC\
+> **Android**: MobileNativeCode/Source/MobileNativeCode/Private/Android/Java/
 
-* Visual Studio/(If IOS - Xcode) is needed to build the plugin
-* Tested on versions of Unreal Engine 4 (4.24/4.25/4.26/4.27) and 3 phones
-* The entire code is divided into blocks for easier understanding
+> **iOS**: MobileNativeCode/Source/MobileNativeCode/Private/IOS/ObjC/
 
-> // #~~~~~~~~~ begin 1 ~~~~~~~~~~
-
-> // ~~~~~~~~~~~ end 1 ~~~~~~~~~~
+Requirements:
+* Visual Studio for Windows
+* Xcode for iOS
 
 # Setup
 
@@ -53,13 +51,11 @@ Located on the path:
 
 # Testing
 
-* *Unreal Engine 4.24* - **Honor Play** - *OpenGL ES2* - *armeabi-v7a* - **ndk-r14b**
- and
-* *Unreal Engine 4.25* - **Honor Play** - *OpenGL ES3.1* - *arm64-v8a* - **ndk-r21b**
+**Android**
 
 ![HonorPlay](screenshot/HonorPlay_2.png)
 
-* *Unreal Engine 4.25* - **iPhone 7** - *Xcode 12.4* - *macOS BigSur 10.16.1*
+**iOS**
 
 ![iPhone7](screenshot/iPhone7_2.png)
 
@@ -71,6 +67,20 @@ Located on the path:
 This file demonstrates 5 functions for calling Java code.
 
 * **(IMPORTANT!)** When adding a new Java class or changing the current one, delete the **Intermediate** folder in your project folder.
+
+* **Note for UE4 users**: If you're using UE4, uncomment the following code block in `MobileNativeCode_UPL_Android.xml`:
+```xml
+<!-- Remove this comment for Ue4! For target SDK 31 update the SplashActivity activity -->
+<!-- <loopElements tag="activity">
+      <setStringFromAttribute result="activityName" tag="$" name="android:name"/>
+      <setBoolIsEqual result="bSplashActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.SplashActivity"/>
+      <if condition="bSplashActivity">
+        <true>
+          <addAttribute tag="$" name="android:exported" value="true"/>
+        </true>
+      </if>
+    </loopElements> -->
+```
 
 To call your own Java class:
 
@@ -125,7 +135,7 @@ In the commented lines, there is an example of how information is added to the I
 
 * You can see the list of connected public libraries in the file *MobileNativeCode\Source\MobileNativeCode\MobileNativeCode.Build.cs*
 ![build](screenshot/IOS_framework2.png)
-If you don't have the Framework you need, add it yourself by simply continuing the list.
+* If you don't have the Framework you need, add it yourself by simply continuing the list.
 [Learn more about the IOS Framework](https://developer.apple.com/documentation/technologies)
 
 * Also **MobileNativeCode.Build.cs** shows examples of connecting libraries **.framework and* **.bundle* in **.ipa* file

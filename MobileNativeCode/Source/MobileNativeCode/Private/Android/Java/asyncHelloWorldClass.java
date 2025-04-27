@@ -1,7 +1,7 @@
 package com.Plugins.MobileNativeCode;//Use only this package, do not change it!!!
 
 import android.app.Activity;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 
 @Keep

@@ -1,13 +1,8 @@
 #include "MobileNativeCodeBlueprint.h"
+
 #include "MobileNativeCode.h"
 #include <Async/Async.h>
 #include <Engine.h>
-
-#include <iostream>
-#include <string>
-#include <sstream>
-
-using namespace std;
 
 // All Java classes are on the path: "MobileNativeCode\Source\MobileNativeCode\Private\Android\Java\"
 // All Objective-C classes are on the path: "MobileNativeCode\Source\MobileNativeCode\Private\IOS\ObjC\"
@@ -26,23 +21,6 @@ using namespace std;
 #include "IOS/ObjC/IosDeviceInfo.h"
 #endif
 
-#if PLATFORM_ANDROID
-// In version 4.24 and below, gnustl is used in which C++11 support is incomplete
-// the Necessary functionality is added independently in this block
-
-#if ENGINE_MINOR_VERSION<=24//
-
-template <typename T>
-std::string to_string(T value)
-{
-  std::ostringstream os;
-  os << value;
-  return os.str();
-}
-
-#endif
-
-#endif //Android
 
 
 // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ begin 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,9 +84,9 @@ void UMobileNativeCodeBlueprint::asyncHelloWorld(const FTypeDispacth& CallBackPl
 void UMobileNativeCodeBlueprint::StaticFunctDispatch(const FString& ReturnValue)
 {  
   //Lambda function for the dispatcher
-  AsyncTask(ENamedThreads::GameThread, [=]() {
-    StaticValueDispatch.ExecuteIfBound(ReturnValue);
-    });
+  AsyncTask(ENamedThreads::GameThread, [ReturnValue]() {
+      StaticValueDispatch.ExecuteIfBound(ReturnValue);
+  });
 }
 
 //-- Functions CallBack for Java code
@@ -146,7 +124,7 @@ void UMobileNativeCodeBlueprint::ShowToastMobile(FString Message, EToastLengthMe
 #if PLATFORM_IOS
 
   // Calling a function using the singleton pattern
-  [[IosNativeUI Singleton]showToast:Message.GetNSString() Duration : (int)Length];
+  [[IosNativeUI Singleton] showToast:Message.GetNSString() Duration:(int)Length];
 
 #endif // IOS
 }

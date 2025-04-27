@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "2.1",
+	"VersionName": "2.5",
 	"FriendlyName": "MobileNativeCode",
 	"Description": "Code utils for mobile platforms",
 	"Category": "Mobile",
@@ -23,7 +23,6 @@
 			"LoadingPhase": "Default",
 			"WhitelistPlatforms": [
 				"Win64",
-				"Win32",
 				"Mac",
 				"Android",
 				"IOS"

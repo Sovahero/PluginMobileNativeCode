@@ -9,20 +9,21 @@ https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Programs/Un
 
 <root>
 
+    <!-- =============================================================================================== -->
     <init>
         <log text="MobileNativeCode iOS -> Adding permission to plist"/>
         <trace enable="true"/>
-      
+
+        <dumpvars/>
     </init>
 
+    <!-- =============================================================================================== -->
     <iosPListUpdates>
+        <!-- Permission -->
         <addElements tag="dict" once="true">
-          
             <!-- Here add your data for the p-list -->
 
-            <!-- 
-            EXAMPLE
-            
+            <!-- EXAMPLE
             <key>NSPhotoLibraryAddUsageDescription</key>
             <string>This app saves screen captures to the photo library.</string>
 
@@ -39,7 +40,8 @@ https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Programs/Un
             -->
 
             <!-- end -->
-
         </addElements>
+
     </iosPListUpdates>
+
 </root>

@@ -1,6 +1,6 @@
 package com.Plugins.MobileNativeCode;//Use only this package, do not change it!!!
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 import android.os.Bundle;
 
 @Keep

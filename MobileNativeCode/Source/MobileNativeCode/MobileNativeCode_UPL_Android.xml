@@ -7,11 +7,12 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
 -->
 
 <root xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <!-- init section is always evaluated once per architecture -->
+  <!-- Initializing XML variables  ============================================================================= -->
   <init>
     <log text="MobileNativeCode Android -> Adding properties to Manifest and Gradle"/>
     <trace enable="true"/>
+    
+    <dumpvars/>
     
     <setBool result="bSupported" value="false"/>
 
@@ -25,14 +26,13 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
 
     <if condition="bSupported">
       <false>
-        <log text="WARNING: this architecture is not supported!"/>
+        <log text="WARNING: this architecture is not supported for libelias.so!"/>
       </false>
     </if>
-
   </init>
 
 
-  <!-- optional files or directories to copy or delete from Intermediate/Android/APK before ndk-build -->
+  <!-- These files are copied during build to the linker, and the dst must match package in (*. java)  =============================== -->
   <prebuildCopies>
     <copyDir src="$S(PluginDir)/Private/Android/Java" dst="$S(BuildDir)/src/com/Plugins/MobileNativeCode" />
     <copyDir src="$S(PluginDir)/Private/Android/Java/drawable" dst="$S(BuildDir)/res/drawable" />
@@ -55,7 +55,6 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
       <!-- <copyFile src="$S(PluginDir)/ThirdParty/Android/arm64-v8a/lib/libc++_shared.so"
                 dst="$S(BuildDir)/libs/arm64-v8a/libc++_shared.so" /> -->
     </isArch>
-
   </resourceCopies>
 
 
@@ -67,8 +66,7 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
     </insert>
   </gradleProperties>
 
-
-  <!-- Optional additions to proguard -->
+  <!-- Declare your own classes -->
   <proguardAdditions>
     <insert>
       <!-- Disabling class obfuscation -->
@@ -81,22 +79,22 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
       -keep class androidx.** { *; }
       -keep interface androidx.** { *; }
 
+      -keep class com.facebook.** { *; }
     </insert>
   </proguardAdditions>
 
 
   <!-- Enable libraries in the app itself (Sometimes you don't need to). Optional libraries to load in GameActivity.java before libUE4.so -->
   <soLoadLibrary>
-    <!--<loadLibrary name="c++_shared" 
-                              failmsg="XML! libc++_shared.so library not loaded and required!" />-->
+    <!--<loadLibrary name="c++_shared" failmsg="XML! libc++_shared.so library not loaded and required!" />-->
   </soLoadLibrary>
 
 
   <!-- optional updates applied to AndroidManifest.xml -->
   <androidManifestUpdates>
 
-    <!-- For target SDK 31 update the SplashActivity activity -->
-    <loopElements tag="activity">
+    <!-- Remove this comment for Ue4! For target SDK 31 update the SplashActivity activity -->
+    <!-- <loopElements tag="activity">
       <setStringFromAttribute result="activityName" tag="$" name="android:name"/>
       <setBoolIsEqual result="bSplashActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.SplashActivity"/>
       <if condition="bSplashActivity">
@@ -104,22 +102,29 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
           <addAttribute tag="$" name="android:exported" value="true"/>
         </true>
       </if>
-    </loopElements>
+    </loopElements> -->
     
-    <addElements tag="application">      
+
+    <!-- For Android 13 (API 33) -->
+    <addPermission android:name="com.google.android.gms.permission.AD_ID"/>
+    <removePermission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <addPermission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+
+    <!-- For Android 14 (API 34) -->
+    <addPermission android:name="android.permission.READ_EXTERNAL_STORAGE" android:minSdkVersion="33"/>
+
+    
+    <!-- add Elements -->
+    <addElements tag="application">
       <!-- Your lines that you want to add to the "application" section -->
-      
+
       <!-- 
       EXAMPLE!
       <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/>
       -->
-      
+
     </addElements>
-
-    <!-- Adding your own Permission -->
-    <addPermission android:name="com.android.permission.READ_EXTERNAL_STORAGE"/>
-    <addPermission android:name="com.android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    
   </androidManifestUpdates>
 
 
@@ -127,31 +132,36 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
   <buildGradleAdditions>
     <insert>
       ext {
-          android {
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                  }
-              }
+        android {
+          compileSdkVersion 34
+          buildTypes {
+            release {
+              minifyEnabled false
+            }
           }
+        }
       }
 
       repositories {
         mavenCentral()
         jcenter()
       }
+    </insert>
 
-      <!-- Here you can specify your own dependencies for downloading *.AAR libraries over the Internet. -->
+    <!-- dependencies *.AAR libraries -->
+    <insert>
       dependencies {
-        implementation("com.squareup.okhttp3:okhttp:3.12.13")
-        implementation("com.squareup.okhttp3:okhttp-urlconnection:3.12.13")
-  
-        implementation 'com.google.android.play:core:1.8.0'
-        implementation 'com.google.guava:guava:28.2-android'
-  
-        implementation 'androidx.annotation:annotation:1.0.0'
+      implementation("com.squareup.okhttp3:okhttp:3.12.13")
+      implementation("com.squareup.okhttp3:okhttp-urlconnection:3.12.13")
+      implementation('com.google.android.play:review:2.0.1')
+
+      implementation 'com.google.guava:guava:28.2-android'
+      implementation 'androidx.annotation:annotation:1.0.0'
+
+      implementation 'androidx.work:work-runtime:2.7.1'
       }
     </insert>
+
   </buildGradleAdditions>
 
 
@@ -184,10 +194,18 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
             }
           }
         }
+      
       }
     </insert>
   </baseBuildGradleAdditions>
 
+
+  <!-- optional additions to GameActivity onStart in GameActivity.java -->
+  <gameActivityOnStartAdditions>
+    <!-- For Android 14 (API 34) -->
+    <replace find="registerReceiver(consoleCmdReceiver, new IntentFilter(Intent.ACTION_RUN));"
+             with="registerReceiver(consoleCmdReceiver, new IntentFilter(Intent.ACTION_RUN), RECEIVER_EXPORTED);"/>
+  </gameActivityOnStartAdditions>
 
   <!--  optional base build.gradle buildscript additions -->
   <buildscriptGradleAdditions>
@@ -211,6 +229,5 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
   <minimumSDKAPI>
 
   </minimumSDKAPI>
-
 
 </root>

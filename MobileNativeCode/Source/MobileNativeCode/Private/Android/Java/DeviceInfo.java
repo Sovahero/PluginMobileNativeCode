@@ -3,7 +3,6 @@ package com.Plugins.MobileNativeCode;
 
 import android.app.Activity;
 import android.os.Build;
-import android.provider.Settings;
 import androidx.annotation.Keep;
 import android.content.Context;
 import java.io.File;
@@ -13,7 +12,13 @@ import java.io.File;
 @Keep
 public class DeviceInfo {
 
-	//-- VersioN SDK
+	//-- Init --
+	@Keep
+	public static int Initialization(){		
+		return 1;
+	}
+
+	//---- VersioN SDK Phone ----------------
 	@Keep
 	public static int getSdkInt() {
 		int SdkAndroid = Build.VERSION.SDK_INT;
@@ -30,11 +35,6 @@ public class DeviceInfo {
 		return Build.MODEL;
 	}
 
-	@Keep
-	public static String getAndroidId(Activity activity) {
-		return Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
-	}
-
 	//----- Path to "storage/emulated/0/Android/data/data/%APP_PACKAGE_NAME%/"------------------
 	@Keep
 	public static String GetExternalFilesDir(final Activity activity) {
@@ -45,10 +45,4 @@ public class DeviceInfo {
 
 		return PathStr;
 	}
-
 }
-
-
-
-
-

@@ -1,7 +1,6 @@
 using System.IO;
 using UnrealBuildTool;
 using System.Collections.Generic;
-using Tools.DotNETCommon;
 
 public class MobileNativeCode : ModuleRules
 {
@@ -28,9 +27,12 @@ public class MobileNativeCode : ModuleRules
 
     private void AddFrameworks(string[] frameworks)
     {
-        for (int i = 0; i < frameworks.Length; i+=2){
-            if ((i % 2) == 0){
-                if (frameworks[i + 1] == ""){
+        for (int i = 0; i < frameworks.Length; i += 2)
+        {
+            if ((i % 2) == 0)
+            {
+                if (frameworks[i + 1] == "")
+                {
                     PublicAdditionalFrameworks.Add(
                         new Framework(
                         frameworks[i],
@@ -38,7 +40,8 @@ public class MobileNativeCode : ModuleRules
                         )
                     );
                 }
-                else{
+                else
+                {
                     PublicAdditionalFrameworks.Add(
                         new Framework(
                         frameworks[i],
@@ -79,7 +82,6 @@ public class MobileNativeCode : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[]
             {
-                "RenderCore",
                 "Slate",
                 "SlateCore"
             }
@@ -93,7 +95,7 @@ public class MobileNativeCode : ModuleRules
     public void LoadLib(ReadOnlyTargetRules Target)
     {
         //== If the Windows platform
-        if (Target.Platform == UnrealTargetPlatform.Win64 || Target.Platform == UnrealTargetPlatform.Win32)
+        if (Target.Platform == UnrealTargetPlatform.Win64)
         {
             //Add Include path
             PublicIncludePaths.Add(Path.Combine(PathThirdPartyWindows, "include"));
@@ -136,7 +138,6 @@ public class MobileNativeCode : ModuleRules
 
             //------ .h--------------------
             PrivateIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Private", "Android") });
-
             //----- .so ------------------
             // To connect .so dynamic libraries also need to be added to .xml file
 
@@ -152,9 +153,9 @@ public class MobileNativeCode : ModuleRules
             }
 
             //-------XML---------------------------------------
-            {/* Additional steps for building on Android. Basically, all the basic information is specified in xml.
-             * The xml file is located on the path: "Plugins\MobileNativeCode\Source\MobileNativeCode\MobileNativeCode_UPL_Android.xml"
-             */}
+            /** Additional steps for building on Android. Basically, all the basic information is specified in xml.
+             *  The xml file is located on the path: "Plugins\MobileNativeCode\Source\MobileNativeCode\MobileNativeCode_UPL_Android.xml"
+             */
 
             AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(ModuleDirectory, "MobileNativeCode_UPL_Android.xml"));
         }
@@ -162,30 +163,33 @@ public class MobileNativeCode : ModuleRules
         //== If the IOS platform
         else if (Target.Platform == UnrealTargetPlatform.IOS)
         {
-            //----------------- .define--------------------
-            {/* Redefine for the xcode compiler */}
+            //------------------- .define--------------------
+            // Redefine for the xcode compiler
             PublicDefinitions.Add("TARGET_TV_OS=0");
             PublicDefinitions.Add("BUCK=1");
-            
+            // enable ios 14 support
+            PublicDefinitions.Add("WITH_IOS14_SUPPORT=1");
+
             PrivateDependencyModuleNames.AddRange(new string[]
                 {
                     "Launch"
                 }
             );
+
             //----------------- p-list ------------------
-            {/* The xml file specifies additional lines for Info.plist
-              * The xml file is located on the path: "Plugins\MobileNativeCode\Source\MobileNativeCode\MobileNativeCode_UPL_iOS.xml"
-              */}
+            /** The xml file specifies additional lines for Info.plist
+             *  The xml file is located on the path: "Plugins\MobileNativeCode\Source\MobileNativeCode\MobileNativeCode_UPL_iOS.xml"
+             */
             
             AdditionalPropertiesForReceipt.Add("IOSPlugin", Path.Combine(ModuleDirectory, "MobileNativeCode_UPL_iOS.xml"));
 
-            //------------------- .h--------------------
+            //------------------- .h --------------------
             PrivateIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Private", "IOS") });
             
             //------------------- Public framework------------------------------------
-            {/* A list of public frameworks from Apple that you need to use when building.
-               * You can view the entire list here: https://developer.apple.com/documentation/technologies
-               */}
+            /** A list of public frameworks from Apple that you need to use when building.
+             *  You can view the entire list here: https://developer.apple.com/documentation/technologies
+             */
             
             PublicFrameworks.AddRange(
                     new string[]
@@ -220,7 +224,7 @@ public class MobileNativeCode : ModuleRules
              );
 
             //------------------- Private framework---------------------------------------
-            {/* Third-party libraries are called frameworks and are connected in this line.
+            /** Third-party libraries are called frameworks and are connected in this line.
              * 
              * To get the framework and use it in the UE4 build system. It should have the following folder structure:
              *  MyNameFramework.embeddedframework.zip            <== Pack in *.zip can be used in WinRar
@@ -237,7 +241,7 @@ public class MobileNativeCode : ModuleRules
              * in the root of the framework, so you need to specify "PersonalizedAdConsent" twice in the array.
              * 
              *  If *.framework does not contain a*. bundle, then the second line in the array would be empty.
-             */}
+             */
             
             string[] frameworks = {
              // "PersonalizedAdConsent", "PersonalizedAdConsent",
@@ -248,16 +252,16 @@ public class MobileNativeCode : ModuleRules
             AddFrameworks(frameworks);
 
             //------------------- Private Bundle ---------------------------------------
-            {/* Bundle is used to package your own resources in *.ipa file
+            /** Bundle is used to package your own resources in *.ipa file
              * 
-             * Along the path is a test image: "Plugins\MobileNativeCode\Source\MobileNativeCode\ThirdParty\IOS\bundle\IosDrawable.bundle"
-             * that can be used as follows in ObjC:
+             *  Along the path is a test image: "Plugins\MobileNativeCode\Source\MobileNativeCode\ThirdParty\IOS\bundle\IosDrawable.bundle"
+             *  that can be used as follows in ObjC:
              *
              *   NSString* bundlePath = [[NSBundle mainBundle] pathForResource: @"IosDrawable" ofType: @"bundle"];
              *   NSBundle* bundle = [NSBundle bundleWithPath: bundlePath];
              *   NSString* resource = [bundle pathForResource: @"my_test_icon" ofType: @"png"];
              *   NSURL* imageUrl = [NSURL fileURLWithPath: resource];
-             */}
+             */
 
             string[] bundles = {
                      "IosDrawable",
