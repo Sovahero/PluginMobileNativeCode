@@ -113,15 +113,27 @@ https://docs.unrealengine.com/en-US/SharingAndReleasing/Mobile/UnrealPluginLangu
     <!-- For Android 14 (API 34) -->
     <addPermission android:name="android.permission.READ_EXTERNAL_STORAGE" android:minSdkVersion="33"/>
 
+    <!-- For Wake Up -->
+    <addPermission android:name="android.permission.WAKE_LOCK"/>
+    <addPermission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+    <!-- For Auto Start -->
+    <addPermission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <addPermission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     
     <!-- add Elements -->
     <addElements tag="application">
-      <!-- Your lines that you want to add to the "application" section -->
-
-      <!-- 
-      EXAMPLE!
-      <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/>
-      -->
+      <service android:name="com.Plugins.MobileNativeCode.WakeUpService" android:exported="false"/>
+      <service android:name="com.Plugins.MobileNativeCode.BootService" android:exported="false"/>
+      <receiver
+        android:name="com.Plugins.MobileNativeCode.BootReceiver"
+        android:enabled="true"
+        android:exported="true"
+        android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+	<intent-filter>
+	  <action android:name="android.intent.action.BOOT_COMPLETED" />
+	</intent-filter>
+      </receiver>
 
     </addElements>
     

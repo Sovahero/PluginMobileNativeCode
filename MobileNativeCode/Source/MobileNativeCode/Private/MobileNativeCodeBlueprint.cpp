@@ -259,3 +259,103 @@ void UMobileNativeCodeBlueprint::ExampleMyJavaObject(FString& JavaBundle)
 
 #endif //Android
 }
+
+
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Wake Up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void UMobileNativeCodeBlueprint::EnableWakeUp()
+{
+#if PLATFORM_ANDROID
+    AndroidUtils::CallJavaCode<void>(
+        "com/Plugins/MobileNativeCode/WakeUpManager",
+        "enableWakeUp",
+        "",
+        true
+    );
+#endif
+}
+
+void UMobileNativeCodeBlueprint::DisableWakeUp()
+{
+#if PLATFORM_ANDROID
+    AndroidUtils::CallJavaCode<void>(
+        "com/Plugins/MobileNativeCode/WakeUpManager",
+        "disableWakeUp",
+        "",
+        true
+    );
+#endif
+}
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Wake Up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Auto Start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void UMobileNativeCodeBlueprint::CheckAndRequestOverlayPermission()
+{
+#if PLATFORM_ANDROID
+    AndroidUtils::CallJavaCode<void>(
+        "com/Plugins/MobileNativeCode/OverlayPermissionHelper",
+        "checkAndRequestOverlayPermission",
+        "",
+        true
+    );
+#endif
+}
+
+bool UMobileNativeCodeBlueprint::IsAutoStartEnable()
+{
+    bool bIsAutoStartEnable = false;
+#if PLATFORM_ANDROID
+    bIsAutoStartEnable = AndroidUtils::CallJavaCode<bool>(
+        "com/Plugins/MobileNativeCode/AutoStartManager",
+        "isAutoStartEnable",
+        "",
+        true
+    );
+#endif
+    return bIsAutoStartEnable;
+}
+
+void UMobileNativeCodeBlueprint::SetAutoStart(bool bIsAutoStart)
+{
+#if PLATFORM_ANDROID
+    if (bIsAutoStart)
+    {
+        AndroidUtils::CallJavaCode<void>(
+            "com/Plugins/MobileNativeCode/AutoStartManager",
+            "enableAutoStart",
+            "",
+            true
+        );
+    }
+    else
+    {
+        AndroidUtils::CallJavaCode<void>(
+            "com/Plugins/MobileNativeCode/AutoStartManager",
+            "disableAutoStart",
+            "",
+            true
+        );
+    }
+
+#endif
+}
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Auto Start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Debug ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void UMobileNativeCodeBlueprint::LogJava(FString Tag, FString InString)
+{
+#if PLATFORM_ANDROID
+    AndroidUtils::CallJavaCode<void>(
+        "com/Plugins/MobileNativeCode/LogJava",
+        "logJava",
+        "",
+        false,
+        Tag,
+        InString
+    );
+#endif
+}
+// #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Debug ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

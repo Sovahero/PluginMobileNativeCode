@@ -71,4 +71,50 @@ public:
    */
   UFUNCTION(BlueprintCallable, Category = "MobileNativeCode Category")
   static void ExampleMyJavaObject(FString& JavaBundle);
+
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Wake Up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /**
+  * Enable Wake Lock. Keep Device Always Wake
+  */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static void EnableWakeUp();
+
+  /**
+   * Disable Wake Lock. Don't Keep Device Wake
+   */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static void DisableWakeUp();
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Wake Up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Auto Start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
+  /**
+   * Check And Request Overlay Permission
+   */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static void CheckAndRequestOverlayPermission();
+
+  /**
+   * Is Auto Start Enable?
+   */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static bool IsAutoStartEnable();
+
+  /**
+   * Set Auto Start
+   */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static void SetAutoStart(bool bIsAutoStart);
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Auto Start ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Begin Debug ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /**
+   * Log in java
+   */
+  UFUNCTION(BlueprintCallable, Category = "MobileNativeCodeBlueprint")
+  static void LogJava(FString Tag = "LogJava", FString InString = "");
+  // #~~~~~~~~~~~~~~~~~~~~~~~~~~~ End Debug ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
